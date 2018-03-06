@@ -3,126 +3,113 @@ performed by Blockchain Labs, February 27, 2018
 
 
 ```
-  Contract: ZipToken
-    ✓ should put 1000000000 ZIP in the owner's account.
-    ✓ should distribute all tokens.
-    ✓ should fail to distribute too many tokens. (26432 gas)
+  Contract: Distribution
+    ✓ Controller is able to claim SEN tokens (684118 gas)
+    ✓ Controller is able to claim OTHER tokens (526744 gas)
 
-  Contract: TokenVesting
-    ✓ cannot be released before cliff (26472 gas)
-    ✓ can be released after cliff (80816 gas)
-    ✓ should release proper amount after cliff (80816 gas)
-    ✓ should linearly release tokens during vesting period (217165 gas)
-    ✓ should have released all after end (64717 gas)
-    ✓ should be revoked by owner if revocable is set (52147 gas)
-    ✓ should fail to be revoked by owner if revocable not set (1132732 gas)
-    ✓ should return the non-vested tokens when revoked by owner (68805 gas)
-    ✓ should keep the vested tokens when revoked by owner (68805 gas)
-    ✓ should fail to be revoked a second time (92677 gas)
+  Contract: Distribution
+    ✓ A controller can finalize after reaching distribution cap (4719825 gas)
+    ✓ A token controller should be changed after finalize (426806 gas)
+    ✓ Reserve pool should be minted on finalize (426806 gas)
+    ✓ Tokens can NOT be minted after finalizing (735672 gas)
+    ✓ Transfer is allowed after finalize olny (817330 gas)
 
-  Contract: PausableToken
-    pause
-      when the sender is the token owner
-        when the token is unpaused
-          ✓ pauses the token (28346 gas)
-          ✓ emits a paused event (28346 gas)
-        when the token is paused
-          ✓ reverts (22248 gas)
-      when the sender is not the token owner
-        ✓ reverts (21936 gas)
-    unpause
-      when the sender is the token owner
-        when the token is paused
-          ✓ unpauses the token (28211 gas)
-          ✓ emits an unpaused event (28211 gas)
-        when the token is unpaused
-          ✓ reverts (22113 gas)
-      when the sender is not the token owner
-        ✓ reverts (21804 gas)
-    pausable token
-      paused
-        ✓ is not paused by default
-        ✓ is paused after being paused (28346 gas)
-        ✓ is not paused after being paused and then unpaused (56557 gas)
-      transfer
-        ✓ allows to transfer when unpaused (52033 gas)
-        ✓ allows to transfer when paused and then unpaused (108590 gas)
-        ✓ reverts when trying to transfer when paused (52051 gas)
-      approve
-        ✓ allows to approve when unpaused (45552 gas)
-        ✓ allows to transfer when paused and then unpaused (102109 gas)
-        ✓ reverts when trying to transfer when paused (51743 gas)
-      transfer from
-        ✓ allows to transfer from when unpaused (59302 gas)
-        ✓ allows to transfer when paused and then unpaused (115859 gas)
-        ✓ reverts when trying to transfer from when paused (53225 gas)
-      decrease approval
-        ✓ allows to decrease approval when unpaused (31649 gas)
-        ✓ allows to decrease approval when paused and then unpaused (88206 gas)
-        ✓ reverts when trying to transfer when paused (51941 gas)
-      increase approval
-        ✓ allows to increase approval when unpaused (31754 gas)
-        ✓ allows to increase approval when paused and then unpaused (88311 gas)
-        ✓ reverts when trying to increase approval when paused (52073 gas)
+  Contract: Distribution Initialize
+    ✓ Reserve should be less than total supply cap (584964 gas)
+    ✓ Distribution cap is a diffence between total supply cap and reserve (1877243 gas)
+    ✓ Token total supply should be 0 at the beginning of distribution (4121541 gas)
 
-  Contract: ZipToken
-    ✓ should return the correct totalSupply after construction
-    ✓ should return the correct allowance amount after approval (45552 gas)
-    ✓ should return correct balances after transfer (52033 gas)
-    ✓ should throw an error when trying to transfer more than balance (1883301 gas)
-    ✓ should return correct balances after transfering from another account (89854 gas)
-    ✓ should throw an error when trying to transfer more than allowed (71235 gas)
-    ✓ should throw an error when trying to transferFrom more than _from has (71400 gas)
-    ✓ should increase by 50 then set to 0 when decreasing by more than 50 (62110 gas)
-    ✓ should throw an error when trying to transfer to 0x0 (22493 gas)
-    ✓ should throw an error when trying to transferFrom to 0x0 (69222 gas)
-    validating allowance updates to spender
-      ✓ should start with zero
-      ✓ should increase by 50 then decrease by 10 (78403 gas)
+  Contract: Distribution
+    ✓ Distribution controller is able to mint tokens (259382 gas)
+    ✓ Others except controller cannot mint tokens (29537 gas)
+    ✓ Cannot mint tokens directly on a token (24171 gas)
+    ✓ Mint and store tx paid with different currencies (725268 gas)
 
-·------------------------------------------------------------------------------|----------------------------·
-│                                     Gas                                      ·  Block limit: 8000000 gas  │
-···········································|···································|·····························
-│  Methods                                 ·            21 gwei/gas            ·      1184.10 nzd/eth       │
-·····················|·····················|···········|···········|···········|··············|··············
-│  Contract          ·  Method             ·  Min      ·  Max      ·  Avg      ·  # calls     ·  nzd (avg)  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  TokenVestingMock  ·  release            ·    34717  ·    80816  ·    63359  ·           7  ·       1.58  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  TokenVestingMock  ·  revoke             ·    52147  ·    68805  ·    64641  ·           4  ·       1.61  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  approve            ·        -  ·        -  ·    45552  ·           8  ·       1.13  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  decreaseApproval   ·    16558  ·    31649  ·    27876  ·           4  ·       0.69  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  distributeTokens   ·        -  ·        -  ·        -  ·           0  ·          -  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  increaseApproval   ·    31754  ·    46754  ·    36754  ·           3  ·       0.91  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  pause              ·        -  ·        -  ·    28346  ·          14  ·       0.70  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  transfer           ·        -  ·        -  ·    52033  ·           3  ·       1.29  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  transferFrom       ·    44302  ·    59302  ·    54302  ·           3  ·       1.35  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  transferOwnership  ·        -  ·        -  ·        -  ·           0  ·          -  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  ZipToken          ·  unpause            ·        -  ·        -  ·    28211  ·           8  ·       0.70  │
-·····················|·····················|···········|···········|···········|··············|··············
-│  Deployments                             ·                                   ·  % of limit  ·             │
-···········································|···········|···········|···········|··············|··············
-│  TokenVestingMock                        ·  1109212  ·  1124276  ·  1122907  ·        14 %  ·      27.92  │
-···········································|···········|···········|···········|··············|··············
-│  ZipToken                                ·        -  ·        -  ·  1858631  ·      23.2 %  ·      46.22  │
-·------------------------------------------|-----------|-----------|-----------|--------------|-------------·
+  Contract: Distribution
+    ✓ Distribution is NOT able to mint tokens exceeding distribution cap (293848 gas)
 
-  51 passing (14m)
-  
+  Contract: SEN Burnable
+    ✓ Controler can burn tokens (97237 gas)
+    ✓ Others cannot burn tokens (28547 gas)
+    ✓ Burner can burn his/her tokens (236768 gas)
+    ✓ Burner cannot burn others tokens (4028679 gas)
+
+  Contract: SEN
+    ✓ cloning: a cloned Token will keep the original Token transaction history (2879096 gas)
+    ✓ cloning: a new token could have its own name, symbol and digits (2879096 gas)
+    ✓ cloning: transfer should work after and affect new token only (3141530 gas)
+
+  Contract: SEN
+    ✓ creation: should have an initial balance of 100 tokens
+    ✓ transfers: should transfer 100 tokens to accounts[1] with accounts[0] having 100 tokens (109848 gas)
+    ✓ transfers: should fail when trying to transfer more tokens than accounts[0] has in a balance (27655 gas)
+    ✓ approvals: msg.sender should approve 100 to accounts[1] (46359 gas)
+    ✓ approvals: msg.sender approves accounts[1] of 100 & withdraws 20 once. (163478 gas)
+    ✓ approvals: msg.sender approves accounts[1] of 100 & withdraws 20 twice. (268694 gas)
+    ✓ approvals: msg.sender approves accounts[1] of 90 & withdraws 40 and 60 (2nd tx should fail) (163414 gas)
+    ✓ approvals: attempt withdrawal from account with no allowance (should fail)
+    ✓ approvals: allow accounts[1] 100 to withdraw from accounts[0]. Withdraw 60 and then approve 0 & attempt transfer. (178999 gas)
+
+  Contract: SEN
+    ✓ Tokens cannot be minted after finalizing (188483 gas)
+
+  Contract: SEN
+    ✓ Controler can mint tokens (121605 gas)
+    ✓ Others are not allowed to mint tokens (52718 gas)
+
+·--------------------------------------------------------------------------------------|----------------------------·
+│                                         Gas                                          ·  Block limit: 6721975 gas  │
+····················································|··································|·····························
+│  Methods                                          ·           21 gwei/gas            ·       865.35 usd/eth       │
+···························|························|··········|···········|···········|··············|··············
+│  Contract                ·  Method                ·  Min     ·  Max      ·  Avg      ·  # calls     ·  usd (avg)  │
+···························|························|··········|···········|···········|··············|··············
+│  ApproveAndCallFallBack  ·  receiveApproval       ·       -  ·        -  ·        -  ·           0  ·          -  │
+···························|························|··········|···········|···········|··············|··············
+│  DistributionMock        ·  changeController      ·       -  ·        -  ·    28547  ·           2  ·       0.52  │
+···························|························|··········|···········|···········|··············|··············
+│  DistributionMock        ·  claimTokens           ·  122592  ·   184099  ·   153346  ·           2  ·       2.79  │
+···························|························|··········|···········|···········|··············|··············
+│  DistributionMock        ·  finalize              ·   42381  ·   167488  ·   149616  ·           7  ·       2.72  │
+···························|························|··········|···········|···········|··············|··············
+│  DistributionMock        ·  onApprove             ·       -  ·        -  ·        -  ·           0  ·          -  │
+···························|························|··········|···········|···········|··············|··············
+│  DistributionMock        ·  onTransfer            ·       -  ·        -  ·        -  ·           0  ·          -  │
+···························|························|··········|···········|···········|··············|··············
+│  DistributionMock        ·  proxyMintTokens       ·  222552  ·   259382  ·   253464  ·          14  ·       4.61  │
+···························|························|··········|···········|···········|··············|··············
+│  DistributionMock        ·  setMockedBlockNumber  ·       -  ·        -  ·        -  ·           0  ·          -  │
+···························|························|··········|···········|···········|··············|··············
+│  SEN                     ·  approve               ·   15521  ·    46359  ·    41209  ·           6  ·       0.75  │
+···························|························|··········|···········|···········|··············|··············
+│  SEN                     ·  approveAndCall        ·       -  ·        -  ·        -  ·           0  ·          -  │
+···························|························|··········|···········|···········|··············|··············
+│  SEN                     ·  changeBurner          ·       -  ·        -  ·    28679  ·           2  ·       0.52  │
+···························|························|··········|···········|···········|··············|··············
+│  SEN                     ·  destroyTokens         ·   97237  ·    97537  ·    97387  ·           2  ·       1.77  │
+···························|························|··········|···········|···········|··············|··············
+│  SEN                     ·  mintTokens            ·  121541  ·   121605  ·   121589  ·           4  ·       2.21  │
+···························|························|··········|···········|···········|··············|··············
+│  SEN                     ·  transfer              ·   27655  ·   131249  ·   105834  ·           9  ·       1.92  │
+···························|························|··········|···········|···········|··············|··············
+│  SEN                     ·  transferFrom          ·  105216  ·   117119  ·   114738  ·           5  ·       2.09  │
+···························|························|··········|···········|···········|··············|··············
+│  Deployments                                      ·                                  ·  % of limit  ·             │
+····················································|··········|···········|···········|··············|··············
+│  ApproveAndCallFallBack                           ·  584964  ·  2879096  ·  2531562  ·      37.7 %  ·      46.00  │
+·---------------------------------------------------|----------|-----------|-----------|--------------|-------------·
+
+  34 passing (2m)  
 ```
 
 <br>
 
 ## Summary  
-Upon finalization of the contracts to be used by Zipper, the contracts were assessed on the gas usage of each function to ensure there aren't any unforeseen issues with exceeding the block size GasLimit.
+Upon finalization of the contracts to be used by **Mothership**, the contracts were assessed on the gas usage of each function to ensure there aren't any unforeseen issues with exceeding the block size GasLimit.
 
 <br>
+
+
+**<font color=red>TODO:</font>**
+
+ * Why ApproveAndCallFallBack requires so much gas?
