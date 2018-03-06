@@ -9,11 +9,13 @@ Tests are conducted on the Kovan test network. The following contract has been v
 
 ## Expected behaviour tests
 
-  - [x] Change controller of SEN to Distribution [`0xdd35a7`](https://kovan.etherscan.io/tx/0xdd35a7ce50ae58e0a1abf25c1f8256051215a0c7e03d61615b677a1372a5fe6f)
+  - [x] Cannot change controller of SEN if called by non-owner. [`0x3c3746`](https://kovan.etherscan.io/tx/0x3c3746eb38f959974b1f1ed10dac1797ad6952d7f79e3acc874175de9517f53d)
+  - [x] Owner can change controller of SEN. [`0xdd35a7`](https://kovan.etherscan.io/tx/0xdd35a7ce50ae58e0a1abf25c1f8256051215a0c7e03d61615b677a1372a5fe6f)
+  - [x] Cannot change burner of SEN if called by non-owner. [`0xdd9a7a`](https://kovan.etherscan.io/tx/0xdd9a7a23baa673edd30d217bccefa0c6cc5f7482707d79d0535306f55a6a37b0)
+  - [x] Cannot mintTokens of SEN if called by non-owner. [`0xeccbe2`](https://kovan.etherscan.io/tx/0xeccbe2c8da87cf597b5617f7254c52e31f08751248b8125fa5ff83b5ef35d24d)
   - [x] Cannot mint tokens after finalize has been called [`0x08021e`](https://kovan.etherscan.io/tx/0x08021ea613bfde67e12cace53af6ddcb93fb7c795013307fa6de55dbd9c011b5)
   - [x] Cannot send tokens before finalize has been called [`0xdd35a7`](https://kovan.etherscan.io/tx/0x2817292dd27272f73b9864289931a5aa7700b55ea5c93fc15229bfa5f8e86e3c)
   - [x] Transfer minted tokens after finalize has been called by owner. [`0xf6d0af`](https://kovan.etherscan.io/tx/0xf6d0af260d88f214225a27d9dfd93a9e568422d4c6bca1142388aa4f9e9bb88c)
-
 
 ## Distribution.sol [`0x86c6ee`](https://kovan.etherscan.io/address/0x86c6eeaca5ae56ebc0ea5a7834ababd71aaa78e5#code)
 
@@ -23,6 +25,7 @@ Tests are conducted on the Kovan test network. The following contract has been v
 
 ## Expected behaviour tests
 
+ - [x] Cannot change controller of Distribution if called by non-owner. [`0xa2b70e`](https://kovan.etherscan.io/tx/0xa2b70ee2b405b9764c4cd74f60cc679db58847f6b1678a0e29f65cdc12841a07)
  - [x] Finalize fails when distribution cap is not reached [`0xc01ffb`](https://kovan.etherscan.io/tx/0xc01ffbe29c2eb71a413a1aa38d136a5b823e4ee9a5438f19fbcc6740b9d7d154)
  - [x] Successfully mint tokens [`0x0aaf46`](https://kovan.etherscan.io/tx/0x0aaf46bdfd816abfce3ad520a7025ba2cd1abf237a7321009f061c9433bafe00)
  - [x] Fails to mint tokens exceeding distribution cap [`0xeae236`](https://kovan.etherscan.io/tx/0xeae2364d7661953802066bdbf669262e052b9a9d7708632fcc8b469c24acf708)
