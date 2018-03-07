@@ -68,10 +68,10 @@ It checks some conditions and then calling `doTransfer()`.
 
 Usually it's called by receiver. First of all it checks if the caller is authorised by the token holder (sender) to transfer money from his/her account to receiver account. If so, it forward calls to `doTransfer()` , else it returns fail.
 
-It the caller is the contract controller, the function simply forwards the call to `doTransfer()` without other checks. 
+If the caller is the contract controller, the function simply forwards the call to `doTransfer()` without other checks. 
 
 - **Test cases**
-	- should fail if the the sender doesn't allowed to transfer requested amount
+	- should fail if the the sender didn't allow to transfer requested amount
 	- should call `doTransfer()` if the transfer allowed
 	- should call `doTransfer()` if the caller is the contract controller
 
@@ -342,18 +342,18 @@ function getValueAt(Checkpoint[] storage checkpoints, uint _block) constant inte
 The function retrieves the number of tokens at a given block number.
 <br>Can be called only by other functions of this contract.
 
-The function receives a link to the checkpoints list (changes history of the amount of tokens) and the new amount for the current block.
+It checks if there is token history available and returns 0 if not.
 
-If the last saved block number is the same as the current one, the function updates that last record with a new amount, otherwise it add new record with new (current) block number and specified amount.
+If the queried block is greater or equal to the block number of the last record in history, it returns the value for that block. 
 
+If the queried block is less than the block number of the first record, it returns zero.
 
 - **Test cases**
-	- should add new record with current block number and specified amount
-		- if the checkpoints list is empty
-		- if the last record in the list has the old block number
-	- should overwrite the last record with current block number and specified amount
-		- if the last record in the list has the same block number as the current one
-		- if the last record in the list has the block number greater than the current one
+	- it should return 0 if there are no recorded checkpoints
+	- it should return token amount at the last recorded checkpoint if the queried block number is greater or equal than block number from the last record in history
+	- otherwise it should return the token amount from the last record that preceeds the queried block 
+
+
 
 
 
@@ -477,24 +477,226 @@ The function set the `finalized` flag to TRUE.
 
 
 ## Distribution.sol 
-SEN Token inherits from MiniMe token.
-The contract has only constructor functions to initiate the token.  
+Distribution contract inherits from TokenController and Controlled. It supports MiniMeToken interfaces.
+
+	
+### distribution
+
+```
+function Distribution(
+    address _token,
+    address _reserveWallet,
+    uint256 _totalSupplyCap,
+    uint256 _totalReserve
+  ) public onlyController
+```
+ 
+The constructor.
 
 - **Test cases**
-	- nothing to test
-	
-### distributeTokens(address[] addresses, uint[] values)
- 
-Only owner can call this function.
-	
-It receives two lists as parameters (accounts and amounts) and requires they have the same length. 
-The function iterates through accounts, and then allocates balances with the specified amount.
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
 
-<!--
-- **Params**
-	- List of address
-	- List of amount of tokens
--->
+
+<!-- ----------------------------- -->
+<br>
+
+### distributionCap
+
+```
+function distributionCap() public constant returns (uint256)
+```
+Description.
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+### finalize
+
+```
+function finalize() public onlyController
+```
+Description.
+
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+### proxyMintTokens
+
+```
+  function proxyMintTokens(
+    address _th,
+    uint256 _amount,
+    string _paidCurrency,
+    string _paidTxID
+  ) public onlyController returns (bool)
+```
+Description.
+
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+### onTransfer
+
+```
+function onTransfer(address, address, uint256) public returns (bool)
+```
+Description.
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+### onApprove
+
+```
+function onApprove(address, address, uint256) public returns (bool)
+```
+Description.
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+### claimTokens
+
+```
+function claimTokens(address _token) public onlyController
+``` 
+
+This method can be used by the controller to extract mistakenly sent tokens to this contract.
+
+Pre Conditions:
+
+- only controller can call this function
+
+If the input parameter is equal to 0x0, then function send it's ether balance to the controller's account, otherwise it get the balance of token with that parameter's address, send all of that tokens to the controller and fire `ClaimedTokens` event.
+
+- **Test cases**
+	- should fail if the caller is not a controller
+	- if the caller is a controller:
+		- when the parameter is equal 0x0, should send all ETH to controller's account 
+		- when the parameter is an address of a token, should send that tokens to the controller 
+		- should fire a `ClaimedTokens` event
+
+
+<!-- ----------------------------- -->
+<br>
+
+### totalTransactionCount
+
+```
+function totalTransactionCount(address _owner) public constant returns(uint)
+```
+Description.
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+### getTransactionAtIndex
+
+```
+  function getTransactionAtIndex(address _owner, uint index) public constant returns(
+    uint256 _amount,
+    string _paidCurrency,
+    string _paidTxID
+  )
+``` 
+Description.
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+
+### addTransaction
+
+```
+function addTransaction(
+    Transaction[] storage transactions,
+    uint _amount,
+    string _paidCurrency,
+    string _paidTxID
+    ) internal
+```
+Description.
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+
+### doMint
+
+```
+function doMint(address _th, uint256 _amount) internal
+```
+Description.
+
+- **Test cases**
+	- Owner should be able to call the function
+	- No one except the owner can call the function   
+	- Invalid address in the list should cause reverting
+
+
+<!-- ----------------------------- -->
+<br>
+
+
+### getBlockNumber
+
+```
+function getBlockNumber() internal constant returns (uint256)
+```
+Description.
+
 - **Test cases**
 	- Owner should be able to call the function
 	- No one except the owner can call the function   
