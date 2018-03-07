@@ -70,10 +70,13 @@ Usually it's called by receiver. First of all it checks if the caller is authori
 
 If the caller is the contract controller, the function simply forwards the call to `doTransfer()` without other checks. 
 
-- **Test cases**
-	- should fail if the the sender didn't allow to transfer requested amount
-	- should call `doTransfer()` if the transfer allowed
-	- should call `doTransfer()` if the caller is the contract controller
+**Test cases**
+
+- When called by Controller
+	- it should call `doTransfer()` in any case
+- When called by Token holder
+	- it should fail if the the sender didn't allow to transfer requested amount
+	- it should call `doTransfer()` if the transfer allowed
 
 	
 <!-- ----------------------------- -->
@@ -101,17 +104,18 @@ If so, it fails.
 
 Otherwise, the function updates balances of the receiver and the sender (with checking for overflow error) and log the event `Transfer`.
 
-- **Test cases**
-	- should fail 
-		- if called externally / publically
-		- should fail if the parentSnapShotBlock is greater or equal the current block number
-		- should fail if the receiver address is 0x0
-		- should fail if the receiver's address is equal to the address of this contract
-		- should fail if the requested amount is greater than the sender's balance
-		- should fail if the controller of this contract is the distribution contract (distribution period is still going)
-	- should pass
-		- if the amount is zero
-		- if the distribution period is over and the amount to transfer is less than the balance of sender
+**Test cases**
+
+- should fail 
+	- if called externally / publically
+	- should fail if the parentSnapShotBlock is greater or equal the current block number
+	- should fail if the receiver address is 0x0
+	- should fail if the receiver's address is equal to the address of this contract
+	- should fail if the requested amount is greater than the sender's balance
+	- should fail if the controller of this contract is the distribution contract (means the distribution period is still going)
+- should pass
+	- if the amount is zero
+	- if the distribution period is over and the amount to transfer is less than the balance of sender
 
 <!-- ----------------------------- -->
 <br>
@@ -142,15 +146,16 @@ Pre-Conditions:
 The function saves the allowed amount to the sender's allowances list and fires an `Approval` event.
 Returns true.
  
-- **Test cases**
-	- should record a zero allowance
-	- should fail if the contract's controller is the distribution contract
-	- if the contract's controller is not the distribution contract
-		- if amount is greater than zero
-			- it should record new allowance if no previous allowance recorded
-			- it should record new allowance if the recorded allowance set to zero
-			- should fail if the recorded allowance is not equal to zero
-			- should fire an `Approval` event
+**Test cases**
+
+- should record a zero allowance
+- should fail if the contract's controller is the distribution contract
+- if the contract's controller is not the distribution contract
+	- if amount is greater than zero
+		- it should record new allowance if no previous allowance recorded
+		- it should record new allowance if the recorded allowance set to zero
+		- should fail if the recorded allowance is not equal to zero
+		- should fire an `Approval` event
 
 
 <!-- ----------------------------- -->
@@ -165,9 +170,10 @@ function allowance(address _owner, address _spender) public constant returns (ui
 It returns the amount allowed by sender to transfer to receiver.
 
 
-- **Test cases**
-	- should return the currently allowed amount if there is allowance record exist
-	- should return 0 if there is no allowance record
+**Test cases**
+
+- should return the currently allowed amount if there is allowance record exist
+- should return 0 if there is no allowance record
 
 <!-- ----------------------------- -->
 <br>
@@ -183,11 +189,10 @@ Token holder approves `_spender` to send `_amount` tokens on
 its behalf, and then a function is triggered in the contract that is
 being approved, `_spender`. 
 
-Pre Condition: `_spender` should be approved by the token holder to transfer specified `_amount`
+Pre Condition: 
 
+- `_spender` should be approved by the token holder to transfer specified `_amount`
 
-- **Test cases**
-	- nothing to test
 
 
 #### Security concerns
@@ -227,13 +232,14 @@ It also checks the parent token balance if the block number of the owner's first
 It returns `_owner` balance at the specified block number, for the current token (if found) or the parent one.
 <Br>It returns zero if there is no parent token.
 
-- **Test cases**
-	- if the first record of the owner balance is for the block number which is greater than a queried block OR there is no records at all for this owner
-		- if the queried block number is less than the block number when the current token was created
-			- should return the owner balance at the queried block number
-		- otherwise
-			- should return the owner balance at the block number when this token was created  
-		- should returns zero if there is no parent tokens used
+**Test cases**
+
+- if the first record of the owner balance is for the block number which is greater than a queried block OR there is no records at all for this owner
+	- if the queried block number is less than the block number when the current token was created
+		- should return the owner balance at the queried block number
+	- otherwise
+		- should return the owner balance at the block number when this token was created  
+	- should returns zero if there is no parent tokens used
 
 
 <!-- ----------------------------- -->
@@ -254,13 +260,14 @@ It also checks the parent token Total Supply if the block number of the first re
 It returns Total Supply at the specified block number, for the current token (if found) or the parent one.
 <Br>It returns zero if there is no parent token.
 
-- **Test cases**
-	- if the first record with the Total Supply is for the block number which is greater than a queried block OR there is no records of Total Supply at all 
-		- if the queried block number is less than the block number when the current token was created
-			- should return the Total Supply at the queried block number
-		- otherwise
-			- should return the Total Supply at the block number when this token was created  
-		- should returns zero if there is no parent tokens used
+**Test cases**
+
+- if the first record with the Total Supply is for the block number which is greater than a queried block OR there is no records of Total Supply at all 
+	- if the queried block number is less than the block number when the current token was created
+		- should return the Total Supply at the queried block number
+	- otherwise
+		- should return the Total Supply at the block number when this token was created  
+	- should returns zero if there is no parent tokens used
 
 
 
@@ -282,13 +289,18 @@ Pre Conditions:
 
 The function update the checkpoints list with new Total Supply and increases the balance of the owner to the specified amount. It also checks for overflow.
 
-- **Test cases**
-	- should fail when called by normal user
-	- when called by Controller
-		- should mint tokens directly to the balance of specified owner
-		- should fire a `Transfer` event
-		- should fail if distribution period is finalized
+**Test cases**
 
+- Controller 
+	- can mint tokens directly to the balance of specified owner
+		- it should fire a `Transfer` event
+		- it should fail if distribution period is finalized
+- anyone else
+	- should fail calling this function
+
+	
+	
+	
 <!-- ----------------------------- -->
 <br>
 
@@ -315,18 +327,16 @@ The function updates the total balance of the tokens and the balance of the `_ow
 Finally, it returns TRUE.
 
 
-- **Test cases**
-	- it should fail
+**Test cases**
+
+- Controller or Burner
+	- can destroy specified amount from specified account if the amount to destroy is less than total supply AND amount to destroy is less than the `_owner` balance
+		- it should fire `Transfer` event with 0x0 as a reciepient of that amount
+	- should get fail
 		- if the total supply is less than an amount to destroy
 		- if the owner balance is less than an amount to destroy
-		- if called by any except Controller or Burner (contract deployer by default) 
-	- when the amount to destroy is less than total supply AND amount to destroy is less than the `_owner` balance
-		- when its called by Controller
-			- it should destroy specified amount from specified account
-			- it should `Transfer` event with 0x0 as a reciepient of that amount
-		- when its called by Burner
-			- it should destroy specified amount from burner's account
-			- it should `Transfer` event with 0x0 as a reciepient of that amount
+- anyone else
+	- should fail calling this function
 
 
 
@@ -348,10 +358,11 @@ If the queried block is greater or equal to the block number of the last record 
 
 If the queried block is less than the block number of the first record, it returns zero.
 
-- **Test cases**
-	- it should return 0 if there are no recorded checkpoints
-	- it should return token amount at the last recorded checkpoint if the queried block number is greater or equal than block number from the last record in history
-	- otherwise it should return the token amount from the last record that preceeds the queried block 
+**Test cases**
+
+- it should return 0 if there are no recorded checkpoints
+- it should return token amount at the last recorded checkpoint if the queried block number is greater or equal than block number from the last record in history
+- otherwise it should return the token amount from the last record that preceeds the queried block 
 
 
 
@@ -374,13 +385,14 @@ The function receives a link to the checkpoints list (changes history of the amo
 If the last saved block number is the same as the current one, the function updates that last record with a new amount, otherwise it add new record with new (current) block number and specified amount.
 
 
-- **Test cases**
-	- should add new record with current block number and specified amount
-		- if the checkpoints list is empty
-		- if the last record in the list has the old block number
-	- should overwrite the last record with current block number and specified amount
-		- if the last record in the list has the same block number as the current one
-		- if the last record in the list has the block number greater than the current one
+**Test cases**
+
+- it should add new record with current block number and specified amount
+	- if the checkpoints list is empty
+	- if the last record in the list has the old block number
+- it should overwrite the last record with current block number and specified amount
+	- if the last record in the list has the same block number as the current one
+	- if the last record in the list has the block number greater than the current one
 
 
 
@@ -397,10 +409,11 @@ function isContract(address _addr) constant internal returns(bool)
 Internal function to determine if an address is a contract. Returns TRUE if so.
 Returns FALSE if the addres is equal to zero or not a contract's address.
 
-- **Test cases**
-	- should return fail if the address is a personal account
-	- should return fail if the address is 0x0
-	- should return true if the address is this contract address
+**Test cases**
+
+- should return fail if the address is a personal account
+- should return fail if the address is 0x0
+- should return true if the address is this contract address
 
 
 
@@ -436,13 +449,15 @@ Pre Conditions:
 
 If the input parameter is equal to 0x0, then function send it's ether balance to the controller's account, otherwise it get the balance of token with that parameter's address, send all of that tokens to the controller and fire `ClaimedTokens` event.
 
-- **Test cases**
-	- should fail if the caller is not a controller
-	- if the caller is a controller:
-		- when the parameter is equal 0x0, should send all ETH to controller's account 
-		- when the parameter is an address of a token, should send that tokens to the controller 
-		- should fire a `ClaimedTokens` event
+**Test cases**
 
+- Controller:
+	- can retrieve all ETH to controller's account when the `_token` is equal 0x0
+		- it also should fire a `ClaimedTokens` event
+	- can retrieve tokens when the `_token` is an address of a token
+		- it also should fire a `ClaimedTokens` event
+- anyone else
+	- should fail calling this function
 
 
 <!-- ----------------------------- -->
@@ -459,12 +474,13 @@ The function set the `finalized` flag to TRUE.
 
 
 
-- **Test cases**
-	- should fail if called by anyone except the controller
-	- should fail if `finalized` is equal to TRUE
+**Test cases**
 
-
-
+- Controller 
+	- can set `finalized` to TRUE if it's FALSE
+	- should get fail if `finalized` is TRUE
+- anyone else
+	- should fail calling this function
 
 
 
@@ -491,13 +507,31 @@ function Distribution(
   ) public onlyController
 ```
  
-The constructor.
+The constructor. It initialises:
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+- SEN Token
+- "team" wallet
+- the total amount of tokens to be issued (total supply)
+- the amount of token reserved 
 
+Pre Conditions:
+
+- can be called by Controller only
+- new token should have 18 digits
+- total supply now should be equal to zero 
+- amount of tokens to reserve should be less than total supply
+- no Token connected yet
+
+**Test cases**
+
+- input data
+	- should fail 
+		- if called by normal user
+		- if `_totalReserve ` is greater or equal than `_totalSupplyCap`
+		- if `token` is not equal to zero
+- behaviour 
+	- should fail 
+		- if `_totalSupply` now is not equal to zero
 
 <!-- ----------------------------- -->
 <br>

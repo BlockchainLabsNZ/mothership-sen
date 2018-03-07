@@ -10,8 +10,8 @@
     "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
     "solium": "solium -d contracts",
     "lint": "yarn eslint",
-    "precommit": "yarn lint && yarn solium",
-    "prepush": "yarn lint && yarn solium"
+//    "precommit": "yarn lint && yarn solium",
+//    "prepush": "yarn lint && yarn solium"
   },
   "devDependencies": {
     "bignumber.js": "^4.1.0",
