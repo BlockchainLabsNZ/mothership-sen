@@ -1,10 +1,14 @@
 # Static analysis
-<br>
+<br>
+
 ## SEN.sol SEN Token inherits from MiniMe token.
 The contract has only constructor functions to initiate the token. No parent token, no history.
 - **Test cases**
 	- nothing to test
-<br>
+
+<!-- ----------------------------- -->
+<br>
+
 ## MiniMeToken.sol SEN Token inherits from [Minime Token contracts](https://github.com/Giveth/minime). 
 <br>There are some changes:
 
@@ -25,7 +29,10 @@ The original MiniMe token contract allows the contract controller to transfer to
 - `ClaimedTokens()` - can be used by the controller to extract mistakenly sent tokens to this contract.
 
 
-<br>	### MiniMeToken (constructor)
+<!-- ----------------------------- -->
+<br>
+
+	### MiniMeToken (constructor)
 ```
   function MiniMeToken(
     address _parentToken,
@@ -37,7 +44,10 @@ The original MiniMe token contract allows the contract controller to transfer to
 ```
 It receives lists of parameters and initialises the contract variables.
 
-<br>### transfer
+<!-- ----------------------------- -->
+<br>
+
+### transfer
 
 ```
 function transfer(address _to, uint256 _amount) public returns (bool success)
@@ -45,7 +55,9 @@ function transfer(address _to, uint256 _amount) public returns (bool success)
 
 It forwards call to `doTransfer()`.
 
+<!-- ----------------------------- -->
 <br>
+
 ### transferFrom
 
 ```
@@ -64,7 +76,9 @@ It the caller is the contract controller, the function simply forwards the call 
 	- should call `doTransfer()` if the caller is the contract controller
 
 	
+<!-- ----------------------------- -->
 <br>
+
 ### doTransfer
 
 ```
@@ -88,16 +102,20 @@ If so, it fails.
 Otherwise, the function updates balances of the receiver and the sender (with checking for overflow error) and log the event `Transfer`.
 
 - **Test cases**
-	- should fail if called externally / publically
-	- should return true if the amount is zero
-	- should fail if the parentSnapShotBlock is greater or equal the current block number
-	- should fail if the receiver address is 0x0
-	- should fail if the receiver's address is equal to the address of this contract
-	- should fail if the requested amount is greater than the sender's balance
-	- should fail if the controller of this contract is the distribution contract (distribution period is still going)
-	- should pass if the distribution period is over and the amount to transfer is less than the balance of sender
+	- should fail 
+		- if called externally / publically
+		- should fail if the parentSnapShotBlock is greater or equal the current block number
+		- should fail if the receiver address is 0x0
+		- should fail if the receiver's address is equal to the address of this contract
+		- should fail if the requested amount is greater than the sender's balance
+		- should fail if the controller of this contract is the distribution contract (distribution period is still going)
+	- should pass
+		- if the amount is zero
+		- if the distribution period is over and the amount to transfer is less than the balance of sender
 
+<!-- ----------------------------- -->
 <br>
+
 ### balanceOf
 ```
 function balanceOf(address _owner) public constant returns (uint256 balance)
@@ -105,7 +123,9 @@ function balanceOf(address _owner) public constant returns (uint256 balance)
 
 It calls for the `balanceOfAt()` sending the checking address and the current block number.
 
+<!-- ----------------------------- -->
 <br>
+
 ### approve
 
 ```
@@ -119,7 +139,7 @@ Pre-Conditions:
  - amount is equal to zero or allowance already set to zero
  - contract controller is not a distribution contract
 
-The function saves the allowed amount to the sender's allowances list and fires an event `Approval`.
+The function saves the allowed amount to the sender's allowances list and fires an `Approval` event.
 Returns true.
  
 - **Test cases**
@@ -130,9 +150,12 @@ Returns true.
 			- it should record new allowance if no previous allowance recorded
 			- it should record new allowance if the recorded allowance set to zero
 			- should fail if the recorded allowance is not equal to zero
+			- should fire an `Approval` event
 
 
+<!-- ----------------------------- -->
 <br>
+
 ### allowance
 
 ```
@@ -146,7 +169,10 @@ It returns the amount allowed by sender to transfer to receiver.
 	- should return the currently allowed amount if there is allowance record exist
 	- should return 0 if there is no allowance record
 
+<!-- ----------------------------- -->
 <br>
+
+
 ### approveAndCall
 
 ```
@@ -159,8 +185,9 @@ Function description
 - **Test cases**
 	- nothing to test
 
-
+<!-- ----------------------------- -->
 <br>
+
 ### totalSupply
 
 ```
@@ -171,18 +198,24 @@ It calls for the `totalSupplyAt()` with a current block number.
 
 
 
+<!-- ----------------------------- -->
 <br>
+
 ### balanceOfAt
 
 ```
 function balanceOfAt(address _owner, uint _blockNumber) public constant returns (uint) 
 ```
 
-Function description
+The function queries the balance of `_owner` at a specific `_blockNumber`.
 
 
 - **Test cases**
 	- nothing to test
+
+
+<!-- ----------------------------- -->
+<br>
 
 ### totalSupplyAt
 
@@ -190,113 +223,204 @@ Function description
 function totalSupplyAt(uint _blockNumber) public constant returns(uint)
 ```
 
-Function description
+This function returns the total amount of tokens at a specific `_blockNumber`.
 
 
 - **Test cases**
 	- nothing to test
 
 
+<!-- ----------------------------- -->
 <br>
+
 ### mintTokens
 
 ```
 function mintTokens(address _owner, uint _amount) public onlyController notFinalized returns (bool)
 ```
 
-Function description
+Mint `_amount` tokens that are assigned to `_owner`.
 
+Pre Conditions:
+
+- Can be called only by Controller
+- Only when the distribution period is not finalized
+
+The function update the checkpoints list with new Total Supply and increases the balance of the owner to the specified amount. It also checks for overflow.
 
 - **Test cases**
 	- nothing to test
 
+
+
+<!-- ----------------------------- -->
 <br>
+
+
 ### destroyTokens
 
 ```
 function destroyTokens(address _owner, uint _amount) public onlyControllerOrBurner(_owner) returns (bool)
 ```
 
-Function description
+The function burns `_amount` tokens from `_owner`.
+<br>Can be called only by the Controller or Burner (Contract creator becomes a Burner by default). 
+
+Pre Conditions:
+
+- The total amount of tokens should be greater than amount to destroy
+- The balance of an owner should be greater than amount to destroy
+
+Controller as caller can burn the specified amount of tokens of any account. 
+<br>The contract deployer/creator can burn the specified amount of own tokens. 
+
+The function updates the total balance of the tokens and the balance of the `_owner`, decreasing the specified `_amount` from that accounts. Then it fires a `Transfer` event about transfering `_amount` from the `_owner` account to 0x0.
+
+Finally, it returns TRUE.
 
 
 - **Test cases**
-	- nothing to test
+	- it should fail
+		- if the total supply is less than an amount to destroy
+		- if the owner balance is less than an amount to destroy
+		- if called by any except Controller or Burner (contract deployer by default) 
+	- when the amount to destroy is less than total supply AND amount to destroy is less than the `_owner` balance
+		- when its called by Controller
+			- it should destroy specified amount from specified account
+			- it should `Transfer` event with 0x0 as a reciepient of that amount
+		- when its called by Burner
+			- it should destroy specified amount from burner's account
+			- it should `Transfer` event with 0x0 as a reciepient of that amount
 
+
+
+<!-- ----------------------------- -->
 <br>
+
 ### getValueAt
 
 ```
 function getValueAt(Checkpoint[] storage checkpoints, uint _block) constant internal returns (uint)
 ```
 
-Function description
+The function retrieves the number of tokens at a given block number.
+<br>Can be called only by other functions of this contract.
+
+The function receives a link to the checkpoints list (changes history of the amount of tokens) and the new amount for the current block.
+
+If the last saved block number is the same as the current one, the function updates that last record with a new amount, otherwise it add new record with new (current) block number and specified amount.
 
 
 - **Test cases**
-	- nothing to test
+	- should add new record with current block number and specified amount
+		- if the checkpoints list is empty
+		- if the last record in the list has the old block number
+	- should overwrite the last record with current block number and specified amount
+		- if the last record in the list has the same block number as the current one
+		- if the last record in the list has the block number greater than the current one
 
+
+
+<!-- ----------------------------- -->
 <br>
+
 ### updateValueAtNow
 
 ```
 function updateValueAtNow(Checkpoint[] storage checkpoints, uint _value) internal 
 ```
 
-Function description
+This function used to update the `balances` map and the `totalSupplyHistory`.
+<br>Can be called only by other functions of this contract.
+
+The function receives a link to the checkpoints list (changes history of the amount of tokens) and the new amount for the current block.
+
+If the last saved block number is the same as the current one, the function updates that last record with a new amount, otherwise it add new record with new (current) block number and specified amount.
 
 
 - **Test cases**
-	- nothing to test
+	- should add new record with current block number and specified amount
+		- if the checkpoints list is empty
+		- if the last record in the list has the old block number
+	- should overwrite the last record with current block number and specified amount
+		- if the last record in the list has the same block number as the current one
+		- if the last record in the list has the block number greater than the current one
 
+
+
+
+<!-- ----------------------------- -->
 <br>
+
 ### isContract
 
 ```
 function isContract(address _addr) constant internal returns(bool)
 ```
 
-Function description
-
+Internal function to determine if an address is a contract. Returns TRUE if so.
+Returns FALSE if the addres is equal to zero or not a contract's address.
 
 - **Test cases**
-	- nothing to test
+	- should return fail if the address is a personal account
+	- should return fail if the address is 0x0
+	- should return true if the address is this contract address
 
+
+
+
+<!-- ----------------------------- -->
 <br>
+
 ### min
 
 ```
 function min(uint a, uint b) pure internal returns (uint) 
 ```
 
-Function description
+Return the smaller from two numbers received. Can be called only by other contract's function. 
 
 
-- **Test cases**
-	- nothing to test
 
+
+<!-- ----------------------------- -->
 <br>
+
 ### claimTokens
 
 ```
 function claimTokens(address _token) public onlyController
 ```
 
-Function description
+This method can be used by the controller to extract mistakenly sent tokens to this contract.
 
+Pre Conditions:
+
+- only controller can call this function
+
+If the input parameter is equal to 0x0, then function send it's ether balance to the controller's account, otherwise it get the balance of token with that parameter's address, send all of that tokens to the controller and fire `ClaimedTokens` event.
 
 - **Test cases**
-	- nothing to test
+	- should fail if the caller is not a controller
+	- if the caller is a controller:
+		- when the parameter is equal 0x0, should send all ETH to controller's account 
+		- when the parameter is an address of a token, should send that tokens to the controller 
+		- should fire a `ClaimedTokens` event
 
+
+
+<!-- ----------------------------- -->
 <br>
+
 ### finalize
 
 ```
 function finalize() public onlyController notFinalized
 ```
 
-Only controller can call this function. It requires `finalized` equal to FALSE.
-<Br>The function set the `finalized` flag to TRUE.
+The function set the `finalized` flag to TRUE.
+<Br>Only controller can call this function. It requires `finalized` equal to FALSE.
+
 
 
 - **Test cases**
@@ -304,7 +428,18 @@ Only controller can call this function. It requires `finalized` equal to FALSE.
 	- should fail if `finalized` is equal to TRUE
 
 
+
+
+
+
+<!-- ----------------------------- -->
 <br>
+<!-- ----------------------------- -->
+
+
+
+
+
 ## Distribution.sol 
 SEN Token inherits from MiniMe token.
 The contract has only constructor functions to initiate the token.  
@@ -329,4 +464,7 @@ The function iterates through accounts, and then allocates balances with the spe
 	- No one except the owner can call the function   
 	- Invalid address in the list should cause reverting
 
+
+<!-- ----------------------------- -->
+<br>
 

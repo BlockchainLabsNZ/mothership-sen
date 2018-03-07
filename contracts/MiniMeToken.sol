@@ -289,8 +289,7 @@ contract MiniMeToken is MiniMeTokenI {
     //  requires that the `parentToken.totalSupplyAt` be queried at the
     //  genesis block for this token as that contains totalSupply of this
     //  token at this block number.
-    if ((totalSupplyHistory.length == 0) ||
-        (totalSupplyHistory[0].fromBlock > _blockNumber)) {
+    if ((totalSupplyHistory.length == 0) || (totalSupplyHistory[0].fromBlock > _blockNumber)) {
       if (address(parentToken) != 0) {
         return parentToken.totalSupplyAt(min(_blockNumber, parentSnapShotBlock));
       } else {
@@ -374,8 +373,7 @@ contract MiniMeToken is MiniMeTokenI {
   /// @param checkpoints The history of data being updated
   /// @param _value The new number of tokens
   function updateValueAtNow(Checkpoint[] storage checkpoints, uint _value) internal {
-    if ((checkpoints.length == 0) ||
-      (checkpoints[checkpoints.length - 1].fromBlock < block.number)) {
+    if ((checkpoints.length == 0) || (checkpoints[checkpoints.length - 1].fromBlock < block.number)) {
       Checkpoint storage newCheckPoint = checkpoints[checkpoints.length++];
       newCheckPoint.fromBlock = uint128(block.number);
       newCheckPoint.value = uint128(_value);
