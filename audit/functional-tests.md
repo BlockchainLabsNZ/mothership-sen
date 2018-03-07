@@ -1,37 +1,32 @@
 # Functional tests
 Tests are conducted on the Kovan test network. The following contract has been verified on Etherscan.
 
-## ZipToken.sol [`0xa52ec0`](https://kovan.etherscan.io/address/0xa52ec0fc83329f4f8672a3cd4ad745715631ed95#code)
-
-### Contract owner can:
-
-* Mint tokens upon deployment of the contract to owners address
-* Distribute tokens balances for list of specified addresses
-* Pause/unpause transfers of Zipper Token
-* Transfer ownership of contract to a new address
-
-### Contributor can:
-
-* Transfer tokens between accounts
-
-## Periods
-* Tokens are minted with a fixed supply upon the contract being deployed
-* Pause/unpause is controlled manually by the contract owner
+## SEN.sol [`0x9578bb`](https://kovan.etherscan.io/address/0x9578bbc4d83c31ae61013339d9645a3bcbf74a23#code)
 
 ## Accounts
 
-* Owner: [0x00f6cf14a82c9f43490e287dff420be026796512](https://kovan.etherscan.io/address/0x00f6cf14a82c9f43490e287dff420be026796512)
-
-* Contributor: [0x005422fc8135d87f49ee4b561cd287eb62b024bb](https://kovan.etherscan.io/address/0x005422fc8135d87f49ee4b561cd287eb62b024bb)
+* Owner: [0x00a55ee49d3471282fe8bbe89b6f8d8a58ff4674](https://kovan.etherscan.io/address/0x00a55ee49d3471282fe8bbe89b6f8d8a58ff4674)
 
 ## Expected behaviour tests
 
-### Contract owner
- - [x] 1 Billion ZIPT minted upon contract deployment [`0x4fea9e`](https://kovan.etherscan.io/tx/0x4fea9ef4a316bad1af297de95bbed2d1c627574619d7ff2f4500cdc5795573de)
- - [x] Distribute tokens to list of addresses with corresponding balances [`0x5383ea`](https://kovan.etherscan.io/tx/0x5383ea2d184a0420861003a41b7760db04b01f04b39be775e4825f69958df41d)
- - [x] Pause token transfers  [`0xd371de`](https://kovan.etherscan.io/tx/0xd371de0149e12cc3afee688d0f5a01f7af496419c142cebb3f2cd99e65414d2a)
- - [x] Unpause token transfers  [`0x73bc7e`](https://kovan.etherscan.io/tx/0x73bc7e8cb25acbbecf6d0d11253d3631e38097c219c3d1c7bfe050c1ccba1d7c)
- - [x] Transfer ownership of contract to another address  [`0xfe953b`](https://kovan.etherscan.io/tx/0xfe953b57025f5aa087c33179237476bd2200d12a46bfafa8e5f505730835dc6a)
+  - [x] Cannot change controller of SEN if called by non-owner. [`0x3c3746`](https://kovan.etherscan.io/tx/0x3c3746eb38f959974b1f1ed10dac1797ad6952d7f79e3acc874175de9517f53d)
+  - [x] Owner can change controller of SEN. [`0xdd35a7`](https://kovan.etherscan.io/tx/0xdd35a7ce50ae58e0a1abf25c1f8256051215a0c7e03d61615b677a1372a5fe6f)
+  - [x] Cannot change burner of SEN if called by non-owner. [`0xdd9a7a`](https://kovan.etherscan.io/tx/0xdd9a7a23baa673edd30d217bccefa0c6cc5f7482707d79d0535306f55a6a37b0)
+  - [x] Cannot mintTokens of SEN if called by non-owner. [`0xeccbe2`](https://kovan.etherscan.io/tx/0xeccbe2c8da87cf597b5617f7254c52e31f08751248b8125fa5ff83b5ef35d24d)
+  - [x] Cannot mint tokens after finalize has been called [`0x08021e`](https://kovan.etherscan.io/tx/0x08021ea613bfde67e12cace53af6ddcb93fb7c795013307fa6de55dbd9c011b5)
+  - [x] Cannot send tokens before finalize has been called [`0xdd35a7`](https://kovan.etherscan.io/tx/0x2817292dd27272f73b9864289931a5aa7700b55ea5c93fc15229bfa5f8e86e3c)
+  - [x] Transfer minted tokens after finalize has been called by owner. [`0xf6d0af`](https://kovan.etherscan.io/tx/0xf6d0af260d88f214225a27d9dfd93a9e568422d4c6bca1142388aa4f9e9bb88c)
 
-### Contributor
- - [x] Transfer tokens successfully [`0x2639d7`](https://kovan.etherscan.io/tx/0x2639d73e01b905c34e5af73132a0d3f18509a62153cc94931ea4fca83bd30d88)
+## Distribution.sol [`0x86c6ee`](https://kovan.etherscan.io/address/0x86c6eeaca5ae56ebc0ea5a7834ababd71aaa78e5#code)
+
+## Accounts
+
+* Owner: [0x00a55ee49d3471282fe8bbe89b6f8d8a58ff4674](https://kovan.etherscan.io/address/0x00a55ee49d3471282fe8bbe89b6f8d8a58ff4674)
+
+## Expected behaviour tests
+
+ - [x] Cannot change controller of Distribution if called by non-owner. [`0xa2b70e`](https://kovan.etherscan.io/tx/0xa2b70ee2b405b9764c4cd74f60cc679db58847f6b1678a0e29f65cdc12841a07)
+ - [x] Finalize fails when distribution cap is not reached [`0xc01ffb`](https://kovan.etherscan.io/tx/0xc01ffbe29c2eb71a413a1aa38d136a5b823e4ee9a5438f19fbcc6740b9d7d154)
+ - [x] Successfully mint tokens [`0x0aaf46`](https://kovan.etherscan.io/tx/0x0aaf46bdfd816abfce3ad520a7025ba2cd1abf237a7321009f061c9433bafe00)
+ - [x] Fails to mint tokens exceeding distribution cap [`0xeae236`](https://kovan.etherscan.io/tx/0xeae2364d7661953802066bdbf669262e052b9a9d7708632fcc8b469c24acf708)
+ - [x] Successfully finalize and transfer reserve tokens to reserve wallet [`0x0b9878`](https://kovan.etherscan.io/tx/0x0b987883128c6c2cfcfb26fa5b0fd53273afc83f262c4b85d291cd5738164ba4)
