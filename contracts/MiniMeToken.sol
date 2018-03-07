@@ -264,8 +264,7 @@ contract MiniMeToken is MiniMeTokenI {
     //  requires that the `parentToken.balanceOfAt` be queried at the
     //  genesis block for that token as this contains initial balance of
     //  this token
-    if ((balances[_owner].length == 0) ||
-        (balances[_owner][0].fromBlock > _blockNumber)) {
+    if ((balances[_owner].length == 0) || (balances[_owner][0].fromBlock > _blockNumber)) {
       if (address(parentToken) != 0) {
         return parentToken.balanceOfAt(_owner, min(_blockNumber, parentSnapShotBlock));
       } else {

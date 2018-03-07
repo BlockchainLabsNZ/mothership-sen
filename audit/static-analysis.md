@@ -179,11 +179,22 @@ It returns the amount allowed by sender to transfer to receiver.
 function approveAndCall(address _spender, uint256 _amount, bytes _extraData) public returns (bool success)
 ```
 
-Function description
+Token holder approves `_spender` to send `_amount` tokens on
+its behalf, and then a function is triggered in the contract that is
+being approved, `_spender`. 
+
+Pre Condition: `_spender` should be approved by the token holder to transfer specified `_amount`
 
 
 - **Test cases**
 	- nothing to test
+
+
+#### Security concerns
+
+The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is no any control on that contract and the `ApproveAndCall()` always returns TRUE (unless the called function reverts).
+
+
 
 <!-- ----------------------------- -->
 <br>
@@ -209,9 +220,20 @@ function balanceOfAt(address _owner, uint _blockNumber) public constant returns 
 
 The function queries the balance of `_owner` at a specific `_blockNumber`.
 
+If there is no any record for the `_owner` it will check the parent token balance at the `_blockNumber`.
+<br>
+It also checks the parent token balance if the block number of the owner's first record is a greater than the `_blockNumber`.
+
+It returns `_owner` balance at the specified block number, for the current token (if found) or the parent one.
+<Br>It returns zero if there is no parent token.
 
 - **Test cases**
-	- nothing to test
+	- if the first record of the owner balance is for the block number which is greater than a queried block OR there is no records at all for this owner
+		- if the queried block number is less than the block number when the current token was created
+			- should return the owner balance at the queried block number
+		- otherwise
+			- should return the owner balance at the block number when this token was created  
+		- should returns zero if there is no parent tokens used
 
 
 <!-- ----------------------------- -->
@@ -225,9 +247,21 @@ function totalSupplyAt(uint _blockNumber) public constant returns(uint)
 
 This function returns the total amount of tokens at a specific `_blockNumber`.
 
+If there is no any record for the Total Supply it will check the parent token Total Supply at the `_blockNumber`.
+<br>
+It also checks the parent token Total Supply if the block number of the first record is a greater than the `_blockNumber`.
+
+It returns Total Supply at the specified block number, for the current token (if found) or the parent one.
+<Br>It returns zero if there is no parent token.
 
 - **Test cases**
-	- nothing to test
+	- if the first record with the Total Supply is for the block number which is greater than a queried block OR there is no records of Total Supply at all 
+		- if the queried block number is less than the block number when the current token was created
+			- should return the Total Supply at the queried block number
+		- otherwise
+			- should return the Total Supply at the block number when this token was created  
+		- should returns zero if there is no parent tokens used
+
 
 
 <!-- ----------------------------- -->
@@ -249,9 +283,11 @@ Pre Conditions:
 The function update the checkpoints list with new Total Supply and increases the balance of the owner to the specified amount. It also checks for overflow.
 
 - **Test cases**
-	- nothing to test
-
-
+	- should fail when called by normal user
+	- when called by Controller
+		- should mint tokens directly to the balance of specified owner
+		- should fire a `Transfer` event
+		- should fail if distribution period is finalized
 
 <!-- ----------------------------- -->
 <br>
