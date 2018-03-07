@@ -14,12 +14,18 @@ Tests are conducted on the Kovan test network. The following contract has been v
   - [x] Cannot change burner of SEN if called by non-owner. [`0xdd9a7a`](https://kovan.etherscan.io/tx/0xdd9a7a23baa673edd30d217bccefa0c6cc5f7482707d79d0535306f55a6a37b0)
   - [x] Owner can change burner of SEN. [`0x198c1f`](https://kovan.etherscan.io/tx/0x198c1f9268340bdefb6e9322d009a95360e90a8086b93a1dbc4e52d6a91dd5b0)
   - [x] New burner can successfully change burner of SEN. [`0x198c1f`](https://kovan.etherscan.io/tx/0x96475944b67432b1e977f1bfee168554a8092ccedfaa5c17ab39eccc4157cf54)
-  - [x] Cannot change controller of SEN before finalize is called. [`0x247590`](https://kovan.etherscan.io/tx/0x2475907a6e124626fac2500e342ae2f626ac3a5b7bbf127c644a6de3f506c6e8
+  - [x] Cannot changer controller of SEN before finalize is called. [`0x247590`](https://kovan.etherscan.io/tx/0x2475907a6e124626fac2500e342ae2f626ac3a5b7bbf127c644a6de3f506c6e8)
   - [x] Owner can change controller of SEN after finalize has been called. [`0xb521a2`](https://kovan.etherscan.io/tx/0xb521a2872660748dedb8062a4ca8134236975e9d7d277c233e76d665da22a879)
   - [x] Cannot mintTokens of SEN if called by non-owner. [`0xeccbe2`](https://kovan.etherscan.io/tx/0xeccbe2c8da87cf597b5617f7254c52e31f08751248b8125fa5ff83b5ef35d24d)
   - [x] Cannot mint tokens after finalize has been called [`0x08021e`](https://kovan.etherscan.io/tx/0x08021ea613bfde67e12cace53af6ddcb93fb7c795013307fa6de55dbd9c011b5)
   - [x] Cannot send tokens before finalize has been called [`0xdd35a7`](https://kovan.etherscan.io/tx/0x2817292dd27272f73b9864289931a5aa7700b55ea5c93fc15229bfa5f8e86e3c)
   - [x] Transfer minted tokens after finalize has been called by owner. [`0xf6d0af`](https://kovan.etherscan.io/tx/0xf6d0af260d88f214225a27d9dfd93a9e568422d4c6bca1142388aa4f9e9bb88c)
+  - [x] Cannot send tokens before finalize has been called [`0xdd35a7`](https://kovan.etherscan.io/tx/0x2817292dd27272f73b9864289931a5aa7700b55ea5c93fc15229bfa5f8e86e3c)
+  - [x] Transfer minted tokens after finalize has been called by owner. [`0xf6d0af`](https://kovan.etherscan.io/tx/0xf6d0af260d88f214225a27d9dfd93a9e568422d4c6bca1142388aa4f9e9bb88c)
+  - [x] Owner can transferFrom token balances of token holders. [`0xd93035`](https://kovan.etherscan.io/tx/0xd930353800f9edcd22cfc6f6b445f02671f6c9d038dac91bfc307a9d889f1c63)
+  - [x] Non-owner cannot transferFrom token balances between addresses. [`0x938557`](https://kovan.etherscan.io/tx/0x9385571228033b8a1fa551a9c3005f656e6e7de840e5059c5c35f532c4c6f1fa)
+  - [x] Owner can burn token balances of token holders. [`0x933067`](https://kovan.etherscan.io/tx/0x933067a2d89f5f70b34c4fd15542e2f1658839f5573ea0756149070d0f19721b)
+  - [x] Non-owner cannot burn token balances of token holders. [`0xa6e897`](https://kovan.etherscan.io/tx/0xa6e897f1ef958572632e23a23e25cd5540e926c0ed333936cd1c6ea8b7c42341)
 
 ## Distribution.sol [`0x86c6ee`](https://kovan.etherscan.io/address/0x86c6eeaca5ae56ebc0ea5a7834ababd71aaa78e5#code)
 
