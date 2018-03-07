@@ -15,6 +15,7 @@ Tests are conducted on the Kovan test network. The following contract has been v
   - [x] Owner can change burner of SEN. [`0x198c1f`](https://kovan.etherscan.io/tx/0x198c1f9268340bdefb6e9322d009a95360e90a8086b93a1dbc4e52d6a91dd5b0)
   - [x] New burner can successfully change burner of SEN. [`0x198c1f`](https://kovan.etherscan.io/tx/0x96475944b67432b1e977f1bfee168554a8092ccedfaa5c17ab39eccc4157cf54)
   - [x] Cannot changer controller of SEN before finalize is called. [`0x247590`](https://kovan.etherscan.io/tx/0x2475907a6e124626fac2500e342ae2f626ac3a5b7bbf127c644a6de3f506c6e8)
+  - [x] Owner can change controller of SEN after finalize has been called. [`0xb521a2`](https://kovan.etherscan.io/tx/0xb521a2872660748dedb8062a4ca8134236975e9d7d277c233e76d665da22a879)
   - [x] Cannot mintTokens of SEN if called by non-owner. [`0xeccbe2`](https://kovan.etherscan.io/tx/0xeccbe2c8da87cf597b5617f7254c52e31f08751248b8125fa5ff83b5ef35d24d)
   - [x] Cannot mint tokens after finalize has been called [`0x08021e`](https://kovan.etherscan.io/tx/0x08021ea613bfde67e12cace53af6ddcb93fb7c795013307fa6de55dbd9c011b5)
   - [x] Cannot send tokens before finalize has been called [`0xdd35a7`](https://kovan.etherscan.io/tx/0x2817292dd27272f73b9864289931a5aa7700b55ea5c93fc15229bfa5f8e86e3c)
