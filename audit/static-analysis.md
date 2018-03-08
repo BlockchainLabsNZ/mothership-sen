@@ -795,7 +795,7 @@ function doMint(address _th, uint256 _amount) internal
 ```
 Call `doMint()` function of the SEN token. Checks if it successful.
 
-d
+
 
 <!-- ----------------------------- -->
 <br>

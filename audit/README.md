@@ -1,14 +1,23 @@
-# Zipper Smart Contract Audit Report
+# Mothership Smart Contract Audit Report
 <br>
 
 ## Preamble
-This audit report was undertaken by <b>BlockchainLabs.nz</b> for the purpose of providing feedback to <b>Zipper</b>. <br>It has subsequently been shared publicly without any express or implied warranty.
+This audit report was undertaken by <b>BlockchainLabs.nz</b> for the purpose of providing feedback to <b>Mothership</b>. <br>It has subsequently been shared publicly without any express or implied warranty.
 
-Solidity contracts were sourced from the public Github repo [zipperglobal/zipt_token/](https://github.com/zipperglobal/zipt_token) prior to commit [0a3c4238353122cfc76b9fb01cd60b28b8b0c9e4](https://github.com/zipperglobal/zipt_token/tree/0a3c4238353122cfc76b9fb01cd60b28b8b0c9e4) - we would encourage all community members and token holders to make their own assessment of the contracts.
+Solidity contracts were sourced from the public Github repo [mothershipcx/sen-contracts](mothershipcx/sen-contracts) prior to commit [b2cd76f851f44f421530eb31ad85e33235a87355](https://github.com/BlockchainLabsNZ/mothership-sen/tree/b2cd76f851f44f421530eb31ad85e33235a87355) - we would encourage all community members and token holders to make their own assessment of the contracts.
 
 <br>
 
-## Methodology
+## Scope
+The following contract was a subject for static, dynamic and functional analyses:  
+
+- [SEN.sol](https://github.com/BlockchainLabsNZ/mothership-sen/blob/master/contracts/SEN.sol)
+- [MiniMeToken.sol](https://github.com/BlockchainLabsNZ/mothership-sen/blob/master/contracts/MiniMeToken.sol)
+- [Distribution.sol](https://github.com/BlockchainLabsNZ/mothership-sen/blob/master/contracts/Distribution.sol)
+
+<br>
+
+## Focus areas
 The audit report is focused on the following key areas - though this is not an exhaustive list.
 
 
@@ -36,8 +45,21 @@ The audit report is focused on the following key areas - though this is not an e
 - Proper management of gas limits and nested execution?
 - Latest version of the Solidity compiler?
 
+<br>
 
-### Defect Severity
+## Analysis
+
+- [Static analysis](static-analysis.md)
+- [Dynamic analysis](dynamic-analysis.md)
+- [Test coverage](test-coverage.md)
+- [Functional tests](functional-tests.md)
+- [Gas consumption](gas-consumption-report.md)
+
+<br>
+
+## Issues
+
+### Severity Description
 <table>
 <tr>
 	<td>Minor</td>
@@ -56,47 +78,29 @@ The audit report is focused on the following key areas - though this is not an e
 	<td>A defect that presents a significant security vulnerability or failure of the contract across a range of scenarios.</td>
 </tr>
 </table>
-
-
-<br>
-
-## Scope
-The following contract was a subject for static, dynamic and functional analyses:  
-
-- [ZipToken.sol](https://github.com/zipperglobal/zipt_token/blob/0a3c4238353122cfc76b9fb01cd60b28b8b0c9e4/contracts/ZipToken.sol)
- 
-There is also javascript used to run the contract functions:
-
-- [deploy_zipt.js](https://github.com/zipperglobal/zipt_token/blob/0a3c4238353122cfc76b9fb01cd60b28b8b0c9e4/deploy_zipt.js)
-
-<br>
-
-## Tests conducted
-
-- [Static analysis](static-analysis.md)
-- [Dynamic analysis](dynamic-analysis.md)
-- [Test coverage](test-coverage.md)
-- [Functional tests](functional-tests.md)
-- [Gas consumption](gas-consumption-report.md)
-
-<br>
-
-## Issues found
-
-List of all issues: [Github](https://github.com/BlockchainLabsNZ/zipper-contracts/issues)
 ### Minor
-- **Unnecessary gas spent when avoiding double distribution** - `Best practice` [Lines 23](https://github.com/BlockchainLabsNZ/zipper-contracts/blob/f5fca30589042cffe83ee140c91ae6133de58ab5/contracts/ZipToken.sol#L23)<br>There is a check if the account has a zero balance. The cost of each check is a 400 gas. Is there any business reason for that? We assumed that this check was implemented to avoid double sending to the account. Consider the following scenario: - The function called twice and between that calls (highly unlikely) the malicious actor transferred tokens to another ... [View on GitHub](https://github.com/BlockchainLabsNZ/zipper-contracts/issues/2)
-	- [x] Fixed [3ca6051a](https://github.com/zipperglobal/zipt_token/commit/3ca6051a9c3b2b6b50d5799297c8f91a838b81b3)
+- **Use of constant is deprecated** - `Best practices`
+<br>MiniMeToken.sol, lines: [189](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L189), [222](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L222), [248](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L248), [260](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L260), ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/5)
 
+- **External function call doesn't marked as untrusted** - `Best practices`
+<br>The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/4)
 
-- **Add Transfer event to ZipToken after minting tokens** - `Best practice` <br>
-It is highly recommended to add `Transfer(0x0, msg.sender, INITIAL_SUPPLY);` event beneath the following line number: [#L15](https://github.com/BlockchainLabsNZ/zipper-contracts/blob/master/contracts/ZipToken.sol#L15]) The reason for this is so that token transfers can be seen on Etherscan and other block explorers... [View on GitHub](https://github.com/BlockchainLabsNZ/zipper-contracts/issues/1)
-  - [x] Fixed [791425](https://github.com/zipperglobal/zipt_token/commit/791425db4b95fbb21bda958aa81e2aa666335c8b)
+- **Gas costs can be reduced by using bytes32 instead of string in proxyMintTokens()** - `Gas-optimization` <br>The `proxyMintTokens` function takes 2 parameters `string _paidCurrency, string _paidTxID`. It is possible to save on gas costs each time this function is called by changing these to `bytes32 _paidCurrency, bytes32 _paidTxID` ... 
+[View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/3)
+
+- **Check if the distribution period is over before checking the balance to save on gas** - `Best practices`
+It check the balance before checking if the distribution is over, in the next few lines.
+You can save a gas on reading ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/2)
+
+- **Favour require() over If() statements** - `Best practices`
+<br>it is better to keep the "require()" from the original MiniMeToken.sol ...
+ [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/1)
 
 ### Moderate
 - None found
 
 ### Major
+
 - None found
 
 ### Critical
@@ -104,43 +108,28 @@ It is highly recommended to add `Transfer(0x0, msg.sender, INITIAL_SUPPLY);` eve
 
 <br>
 
+## Observations
+???
+
+<br>
 
 ## Conclusion
-Overall we are satisfied with the clients attention to detail.
-This contract has a low level risk of ETH and ZIPT being hacked or stolen from the inspected contracts.
 
-<br>
+???
 
-## Observation
-Using Javascript to deploy contracts and then running distribution function will decrease the amount of gas needed but the same time it requires extra trust from the customers that the distribution of tokens will be actually started.
+The developers demonstrated an understanding of Solidity and smart contracts. They were receptive to the feedback provided to help improve the robustness of the contracts.
 
+We took part in carefully reviewing all source code provided, including both static and dynamic testing methodology. 
 
-<br><br>
+Overall we consider the resulting contracts following the audit feedback period adequate and have not identified any potential vulnerabilities. This contract has a low level risk of ETH and SEN being hacked or stolen from the inspected contracts.
 
-
-
-### Disclaimer
 <hr>
 
-This document includes opinions and recommendations. All the opinions are our own and
-independent of the <b>Zipper</b> team. We found issues in the Solidity code and in the general
-design of the system but that doesn’t mean that we found all of the issues.
+### Disclaimer
 
-About the recommendations, they are not intended to be the solutions to the problems. Some
-of them may even be bad ideas. They are only included as a starting point for the research of
-the solutions.
+Our team uses our current understanding of the best practises for Solidity and Smart Contracts. Development in Solidity and for Blockchain is an emergering area of software engineering which still has a lot of room to grow, hence our current understanding of best practise may not find all of the issues in this code and design. 
 
-It’s also important to consider.
+We have not analysed any of the assembly code generated by the Solidity compiler. We have not verified the deployment process and configurations of the contracts. We have only analysed the code outlined in the scope. We have not verified any of the claims made by any of the organisations behind this code. 
 
-- We did not make any low level reviews of the assembly code that will be generated by the Solidity compiler.
-- We did not verify the deployment of the contracts or the initial configuration.
-- We did not analyze any of the code other than the Solidity smart contracts.
-- We did not analyze the governance mechanism.
-
-Security audits like this one reduce the risks of issues, but they do not warranty bug-free code.
-We encourage the community, especially the <b>Zipper</b> community that will be using these
-contracts, to continue to analyze the code and to inform themselves before interacting with
-these or any other smart contracts.
-
-<br>
+Security audits do not warrant bug-free code. We encourge all users interacting with smart contract code to continue to analyse and inform themselves of any risks before interacting with any smart contracts.
 
