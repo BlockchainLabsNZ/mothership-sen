@@ -1,38 +1,43 @@
 # Static analysis
 <br>
 
-## SEN.sol SEN Token inherits from MiniMe token.
-The contract has only constructor functions to initiate the token. No parent token, no history.
-- **Test cases**
-	- nothing to test
 
-<!-- ----------------------------- -->
-<br>
-
-## MiniMeToken.sol SEN Token inherits from [Minime Token contracts](https://github.com/Giveth/minime). 
-<br>There are some changes:
-
-- Token Factory is removed
-- process of token cloning is replaced with minting the only one
-- transfer is always enabled
-- finalisation is added together with a check if the crowd sale is finalised 
-- it doesn't supposed to receive money (no fallback function)
-- it has some differences with original contract in checking conditions - [View issue on Github](https://github.com/BlockchainLabsNZ/mothership-sen/issues/1)#### Security concerns
-
-The original MiniMe token contract allows the contract controller to transfer tokens without token holders permission. In the current implementation of MiniMe it is also always allowed to transfer tokens after minting.
-<hr>
-<br>
-
-#### Events
-- `Transfer()` - when tokens are transfered from one account to another.
-- `Approval()` - transfering of some amount of tokens is approved by token holder.
-- `ClaimedTokens()` - can be used by the controller to extract mistakenly sent tokens to this contract.
-
+## SEN.sol 
+SEN Token inherits from MiniMe token.
+The contract has only constructor functions to initiate the token. No parent token, no history.
 
 <!-- ----------------------------- -->
 <br>
 
-	### MiniMeToken (constructor)
+
+## MiniMeToken.sol 
+SEN Token inherits from [Minime Token contracts](https://github.com/Giveth/minime). 
+<br>There are some changes:
+
+- Token Factory is removed
+- Process of token cloning is replaced with minting the only one
+- Transfer is always enabled
+- Finalization is added together with a check if the crowd sale is finalized
+- It is not supposed to receive ETH (no fallback function)
+- It has some differences with original contract in checking conditions - [View issue on Github](https://github.com/BlockchainLabsNZ/mothership-sen/issues/1)
+
+#### Security concerns
+
+The original MiniMe token contract allows the contract controller to transfer tokens without token holders permission. In the current implementation of MiniMe it is also always allowed to transfer tokens after minting.
+
+<hr>
+<br>
+
+#### Events
+- `Transfer()` - when tokens are transferred from one account to another.
+- `Approval()` - transferring of some amount of tokens is approved by token holder.
+- `ClaimTokens()` - can be used by the controller to extract mistakenly sent tokens to this contract.
+
+<!-- ----------------------------- -->
+<br>
+
+	
+### MiniMeToken (constructor)
 ```
   function MiniMeToken(
     address _parentToken,
@@ -42,18 +47,22 @@ The original MiniMe token contract allows the contract controller to transfer to
     string _tokenSymbol
   ) public
 ```
-It receives lists of parameters and initialises the contract variables.
+It receives lists of parameters and initializes the contract variables.
 
-<!-- ----------------------------- -->
+
+
+<!-- ----------------------------- -->
 <br>
 
-### transfer
+
+### transfer
 
 ```
 function transfer(address _to, uint256 _amount) public returns (bool success)
 ```
 
-It forwards call to `doTransfer()`.
+It forwards call to `doTransfer()`.
+
 
 <!-- ----------------------------- -->
 <br>
@@ -66,7 +75,7 @@ function transferFrom(address _from, address _to, uint256 _amount) public return
 
 It checks some conditions and then calling `doTransfer()`.
 
-Usually it's called by receiver. First of all it checks if the caller is authorised by the token holder (sender) to transfer money from his/her account to receiver account. If so, it forward calls to `doTransfer()` , else it returns fail.
+Usually it's called by receiver. First of all it checks if the caller is authorized by the token holder (sender) to transfer money from his/her account to receiver account. If so, it forward calls to `doTransfer()` , else it returns fail.
 
 If the caller is the contract controller, the function simply forwards the call to `doTransfer()` without other checks. 
 
@@ -92,7 +101,7 @@ It transfers requested amount of tokens from the sender to receiver.
 
 Pre-Conditions:
 
-- The function can be called by other function of this contract only. 
+- The function can only be called by internally.
 - The requested amount should be greater than zero, otherwise it stops and returns TRUE. 
 - `parentSnapShotBlock` (the block number from the Parent Token that was used to determine the initial distribution of the Clone Token) is less than the current block number. - **not relevant to Mothership's implementation of the MiniMe token because they don't clone tokens**.
 - The receiver address is not the address of this contract and other than a zero.
@@ -114,13 +123,13 @@ Otherwise, the function updates balances of the receiver and the sender (with ch
 
 **Test cases**
 
-- should fail 
+- Should fail 
 	- should fail if the parentSnapShotBlock is greater or equal the current block number
 	- should fail if the receiver address is 0x0
 	- should fail if the receiver's address is equal to the address of this contract
 	- should fail if the requested amount is greater than the sender's balance
 	- should fail if the controller of this contract is the distribution contract (means the distribution period is still going)
-- should pass
+- Should pass
 	- if the amount is zero
 	- if the distribution period is over and the amount to transfer is less than the balance of sender
 
@@ -161,9 +170,9 @@ Returns true.
  
 **Test cases**
 
-- should record a zero allowance
-- should fail if the contract's controller is the distribution contract
-- if the contract's controller is not the distribution contract
+- Should record a zero allowance
+- Should fail if the contract's controller is the distribution contract
+	- if the contract's controller is not the distribution contract
 	- if amount is greater than zero
 		- it should record new allowance if no previous allowance recorded
 		- it should record new allowance if the recorded allowance set to zero
@@ -216,7 +225,7 @@ Pre Condition:
 
 #### Security concerns
 
-The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is no any control on that contract and the `ApproveAndCall()` always returns TRUE (unless the called function reverts).
+The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is not any control on that contract and the `ApproveAndCall()` always returns TRUE (unless the called function reverts).
 
 
 
@@ -250,7 +259,7 @@ function balanceOfAt(address _owner, uint _blockNumber) public constant returns 
 
 The function queries the balance of `_owner` at a specific `_blockNumber`.
 
-If there is no any record for the `_owner` it will check the parent token balance at the `_blockNumber`.
+If there is not any record for the `_owner` it will check the parent token balance at the `_blockNumber`.
 <br>
 It also checks the parent token balance if the block number of the owner's first record is a greater than the `_blockNumber`.
 
@@ -260,7 +269,7 @@ It returns `_owner` balance at the specified block number, for the current token
 **Test cases**
 
 - if the first record of the owner balance is for the block number which is greater than a queried block OR there is no records at all for this owner
-	- if the queried block number is less than the block number when the current token was created
+- if the queried block number is less than the block number when the current token was created
 		- should return the owner balance at the queried block number
 	- otherwise
 		- should return the owner balance at the block number when this token was created  
@@ -317,7 +326,7 @@ Pre Conditions:
 - Can be called only by Controller
 - Only when the distribution period is not finalized
 
-The function update the checkpoints list with new Total Supply and increases the balance of the owner to the specified amount. It also checks for overflow.
+The function updates the checkpoints list with new Total Supply and increases the balance of the owner to the specified amount. It also checks for overflow.
 
 **Test cases**
 
@@ -325,7 +334,7 @@ The function update the checkpoints list with new Total Supply and increases the
 	- can mint tokens directly to the balance of specified owner
 		- it should fire a `Transfer` event
 		- it should fail if distribution period is finalized
-- anyone else
+- Anyone else
 	- should fail calling this function
 
 	
@@ -342,7 +351,7 @@ function destroyTokens(address _owner, uint _amount) public onlyControllerOrBurn
 ```
 
 The function burns `_amount` tokens from `_owner`.
-<br>Can be called only by the Controller or Burner (Contract creator becomes a Burner by default). 
+<br>Can be called only by the Controller or Burner (Contract creator becomes burner by default). 
 
 Pre Conditions:
 
@@ -365,7 +374,7 @@ Finally, it returns TRUE.
 	- should get fail
 		- if the total supply is less than an amount to destroy
 		- if the owner balance is less than an amount to destroy
-- anyone else
+- Anyone else
 	- should fail calling this function
 
 
@@ -412,7 +421,7 @@ This function used to update the `balances` map and the `totalSupplyHistory`.
 
 The function receives a link to the checkpoints list (changes history of the amount of tokens) and the new amount for the current block.
 
-If the last saved block number is the same as the current one, the function updates that last record with a new amount, otherwise it add new record with new (current) block number and specified amount.
+If the last saved block number is the same as the current one, the function updates that last record with a new amount, otherwise it adds the new record with new (current) block number and specified amount.
 
 
 **Test cases**
@@ -475,7 +484,7 @@ This method can be used by the controller to extract mistakenly sent tokens to t
 
 Pre Conditions:
 
-- only controller can call this function
+- Only controller can call this function
 
 If the input parameter is equal to 0x0, then function send it's ether balance to the controller's account, otherwise it get the balance of token with that parameter's address, send all of that tokens to the controller and fire `ClaimedTokens` event.
 
@@ -486,7 +495,7 @@ If the input parameter is equal to 0x0, then function send it's ether balance to
 		- it also should fire a `ClaimedTokens` event
 	- can retrieve tokens when the `_token` is an address of a token
 		- it also should fire a `ClaimedTokens` event
-- anyone else
+- Anyone else
 	- should fail calling this function
 
 
@@ -513,7 +522,7 @@ The function set the `finalized` flag to TRUE.
 - Controller 
 	- can set `finalized` to TRUE if it's FALSE
 	- should get fail if `finalized` is TRUE
-- anyone else
+- Anyone else
 	- should fail calling this function
 
 
@@ -544,7 +553,7 @@ function Distribution(
 The constructor. It initialises:
 
 - SEN Token
-- "team" wallet
+- team reserve wallet
 - the total amount of tokens to be issued (total supply)
 - the amount of token reserved 
 
@@ -605,7 +614,7 @@ Pre Conditions:
 - Only Controller can call it
 
 The function checks if total supply is over the distribution cap set.
-Then it mint tokens in the amount of `totalReserv` to the `reserveWallet`, saves the current block number  and call `finalize()` function for the token. Lastly, it changes token's contract Controller to the controller of this contract and fires the `Finalized()` event.
+Then it mint tokens in the amount of `totalReserve` to the `reserveWallet`, saves the current block number  and call `finalize()` function for the token. Lastly, it changes token's contract Controller to the controller of this contract and fires the `Finalized()` event.
 
 **Test cases**
 
@@ -714,7 +723,7 @@ If the input parameter is equal to 0x0, then function send it's ether balance to
 		- it also should fire a `ClaimedTokens` event
 	- can retrieve tokens when the `_token` is an address of a token
 		- it also should fire a `ClaimedTokens` event
-- anyone else
+- Anyone else
 	- should fail calling this function
 
 
