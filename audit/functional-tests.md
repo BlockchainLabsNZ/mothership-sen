@@ -1,7 +1,7 @@
 # Functional tests
 Tests are conducted on the Kovan test network. The following contract has been verified on Etherscan.
 
-## [`SEN.sol`](https://kovan.etherscan.io/address/0x9578bbc4d83c31ae61013339d9645a3bcbf74a23#code)
+## [`SEN`](https://kovan.etherscan.io/address/0x9578bbc4d83c31ae61013339d9645a3bcbf74a23#code)
 
 ## Accounts
 
