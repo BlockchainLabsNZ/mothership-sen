@@ -99,15 +99,22 @@ Pre-Conditions:
 
 The function checks the `balanceOfAt()` of the sender for the current block number. It returns FAIL if the balance is less than an amount requested to transfer. 
 
-Then the function checks if the distibution period is not finalised - by checking if the controller is a distribution contract.
-If so, it fails.
+Then the function checks if the controller is a contract.
+If so, it call the `onTransfer()` function and requires it should return TRUE.
+
+<blockquote>
+Distibution contract's implementation of the onTransfer() function always returns FALSE. 
+<br>
+It means that doTransfer() function will always fail when the token controller is distribution contract.
+<br>
+In other words, while the distribution period is still going on, doTransfer() always fail.
+</blockquote>
 
 Otherwise, the function updates balances of the receiver and the sender (with checking for overflow error) and log the event `Transfer`.
 
 **Test cases**
 
 - should fail 
-	- if called externally / publically
 	- should fail if the parentSnapShotBlock is greater or equal the current block number
 	- should fail if the receiver address is 0x0
 	- should fail if the receiver's address is equal to the address of this contract
@@ -116,6 +123,12 @@ Otherwise, the function updates balances of the receiver and the sender (with ch
 - should pass
 	- if the amount is zero
 	- if the distribution period is over and the amount to transfer is less than the balance of sender
+
+<br>
+#### Security concerns
+
+Tokens holders would be able to transfer their tokens during distribution period **IF** the deployer forgets to change SEN token controller to the distribution contract.
+
 
 <!-- ----------------------------- -->
 <br>
@@ -158,6 +171,7 @@ Returns true.
 		- should fire an `Approval` event
 
 
+
 <!-- ----------------------------- -->
 <br>
 
@@ -174,6 +188,11 @@ It returns the amount allowed by sender to transfer to receiver.
 
 - should return the currently allowed amount if there is allowance record exist
 - should return 0 if there is no allowance record
+
+
+
+
+
 
 <!-- ----------------------------- -->
 <br>
@@ -201,6 +220,9 @@ The `_spender` is an **EXTERNAL** contract that can do anything in the function 
 
 
 
+
+
+
 <!-- ----------------------------- -->
 <br>
 
@@ -211,6 +233,9 @@ function totalSupply() public constant returns (uint)
 ```
 
 It calls for the `totalSupplyAt()` with a current block number.
+
+
+
 
 
 
@@ -242,6 +267,9 @@ It returns `_owner` balance at the specified block number, for the current token
 	- should returns zero if there is no parent tokens used
 
 
+
+
+
 <!-- ----------------------------- -->
 <br>
 
@@ -268,6 +296,8 @@ It returns Total Supply at the specified block number, for the current token (if
 	- otherwise
 		- should return the Total Supply at the block number when this token was created  
 	- should returns zero if there is no parent tokens used
+
+
 
 
 
@@ -460,6 +490,10 @@ If the input parameter is equal to 0x0, then function send it's ether balance to
 	- should fail calling this function
 
 
+
+
+
+
 <!-- ----------------------------- -->
 <br>
 
@@ -533,6 +567,10 @@ Pre Conditions:
 	- should fail 
 		- if `_totalSupply` now is not equal to zero
 
+
+
+
+
 <!-- ----------------------------- -->
 <br>
 
@@ -541,12 +579,14 @@ Pre Conditions:
 ```
 function distributionCap() public constant returns (uint256)
 ```
-Description.
+Returns the amount of tokens to distribute.
+<br>It returns the number of total supply decreased by number of reserved tokens.
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+**Test cases**
+
+- it should return the difference between `totalSupplyCap` and `totalReserve` 
+
+
 
 
 <!-- ----------------------------- -->
@@ -557,13 +597,28 @@ Description.
 ```
 function finalize() public onlyController
 ```
-Description.
+It finalizes the distribution period.
+
+Pre Conditions:
+
+- This method can be called when the distribution cap is reached only
+- Only Controller can call it
+
+The function checks if total supply is over the distribution cap set.
+Then it mint tokens in the amount of `totalReserv` to the `reserveWallet`, saves the current block number  and call `finalize()` function for the token. Lastly, it changes token's contract Controller to the controller of this contract and fires the `Finalized()` event.
+
+**Test cases**
+
+- Controller 	
+	- can call this function
+	- total supply should be greater than distribution cap
+	- finalized block should be set to the current block number after finilizing
+	- controller of the token should be set to the controller of this contract
+- anyone else
+	- should fail calling this function
 
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+
 
 
 <!-- ----------------------------- -->
@@ -579,13 +634,31 @@ Description.
     string _paidTxID
   ) public onlyController returns (bool)
 ```
-Description.
+
+This function logs token purchases and mint tokens for the customers.
+
+Pre Conditions:
+
+- token holder address is valid
+- amount to be mint shouldn't exceed the distribution cap
+
+The function checks if the new token holder adress is greater than zero. 
+It also checks if new tokens amount does not exceed the distribution cap.
+
+Then it generates new tokens (by calling `doMint()` function), save the transaction in history (token holder address, amount of new tokens and payment transaction hash). 
+<br>Finally, it fires an event: `Purchase()`.
+
+**Test cases**
+
+- Controller
+	- can mint new tokens for the token holder
+		- `Purchase()` event should be fired
+	- can not mint if the distibution cap is reached
+- anyone else
+	- should fail calling this function
 
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+
 
 
 <!-- ----------------------------- -->
@@ -596,12 +669,10 @@ Description.
 ```
 function onTransfer(address, address, uint256) public returns (bool)
 ```
-Description.
+Always returns FALSE.
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+
+
 
 
 <!-- ----------------------------- -->
@@ -612,12 +683,11 @@ Description.
 ```
 function onApprove(address, address, uint256) public returns (bool)
 ```
-Description.
+Always returns FALSE.
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+
+
+
 
 
 <!-- ----------------------------- -->
@@ -627,7 +697,7 @@ Description.
 
 ```
 function claimTokens(address _token) public onlyController
-``` 
+```
 
 This method can be used by the controller to extract mistakenly sent tokens to this contract.
 
@@ -637,12 +707,18 @@ Pre Conditions:
 
 If the input parameter is equal to 0x0, then function send it's ether balance to the controller's account, otherwise it get the balance of token with that parameter's address, send all of that tokens to the controller and fire `ClaimedTokens` event.
 
-- **Test cases**
-	- should fail if the caller is not a controller
-	- if the caller is a controller:
-		- when the parameter is equal 0x0, should send all ETH to controller's account 
-		- when the parameter is an address of a token, should send that tokens to the controller 
-		- should fire a `ClaimedTokens` event
+**Test cases**
+
+- Controller:
+	- can retrieve all ETH to controller's account when the `_token` is equal 0x0
+		- it also should fire a `ClaimedTokens` event
+	- can retrieve tokens when the `_token` is an address of a token
+		- it also should fire a `ClaimedTokens` event
+- anyone else
+	- should fail calling this function
+
+
+
 
 
 <!-- ----------------------------- -->
@@ -653,12 +729,15 @@ If the input parameter is equal to 0x0, then function send it's ether balance to
 ```
 function totalTransactionCount(address _owner) public constant returns(uint)
 ```
-Description.
+Returns the number of all token holder transactions.
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+**Test cases**
+
+- should return the number of token holders transactions
+- should return 0 if no transactions found
+
+
+
 
 
 <!-- ----------------------------- -->
@@ -673,17 +752,19 @@ Description.
     string _paidTxID
   )
 ``` 
-Description.
+Query a transaction details by address and its index in transactions array
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+**Test cases**
+
+- should return the transaction details by given token holder and transaction index
+- should return 0 if no transaction found
+
+
+
 
 
 <!-- ----------------------------- -->
 <br>
-
 
 ### addTransaction
 
@@ -695,46 +776,37 @@ function addTransaction(
     string _paidTxID
     ) internal
 ```
-Description.
+Save transaction details belong to an address.
+<br>Can not be called outside of this contract.
 
 - **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
+	- should store transaction details: amount, currency, transaction hash
+
+
 
 
 <!-- ----------------------------- -->
 <br>
-
 
 ### doMint
 
 ```
 function doMint(address _th, uint256 _amount) internal
 ```
-Description.
+Call `doMint()` function of the SEN token. Checks if it successful.
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
-
+d
 
 <!-- ----------------------------- -->
 <br>
-
 
 ### getBlockNumber
 
 ```
 function getBlockNumber() internal constant returns (uint256)
 ```
-Description.
+Returns the current block number. 
 
-- **Test cases**
-	- Owner should be able to call the function
-	- No one except the owner can call the function   
-	- Invalid address in the list should cause reverting
 
 
 <!-- ----------------------------- -->
