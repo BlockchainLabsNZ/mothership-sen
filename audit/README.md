@@ -78,7 +78,9 @@ The audit report is focused on the following key areas - though this is not an e
 	<td>A defect that presents a significant security vulnerability or failure of the contract across a range of scenarios.</td>
 </tr>
 </table>
+
 ### Minor
+
 - **Use of constant is deprecated** - `Best practices`
 <br>MiniMeToken.sol, lines: [189](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L189), [222](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L222), [248](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L248), [260](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L260), ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/5)
 
