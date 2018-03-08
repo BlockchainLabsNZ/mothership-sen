@@ -81,18 +81,11 @@ The audit report is focused on the following key areas - though this is not an e
 
 ### Minor
 
-- **Use of constant is deprecated** - `Best practices`
+- **Use view or pure instead of constant modifier** - `Best practices`
 <br>MiniMeToken.sol, lines: [189](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L189), [222](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L222), [248](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L248), [260](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L260), ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/5)
-
-- **External function call doesn't marked as untrusted** - `Best practices`
-<br>The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/4)
 
 - **Gas costs can be reduced by using bytes32 instead of string in proxyMintTokens()** - `Gas-optimization` <br>The `proxyMintTokens` function takes 2 parameters `string _paidCurrency, string _paidTxID`. It is possible to save on gas costs each time this function is called by changing these to `bytes32 _paidCurrency, bytes32 _paidTxID` ... 
 [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/3)
-
-- **Check if the distribution period is over before checking the balance to save on gas** - `Best practices`
-It check the balance before checking if the distribution is over, in the next few lines.
-You can save a gas on reading ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/2)
 
 - **Favour require() over If() statements** - `Best practices`
 <br>it is better to keep the "require()" from the original MiniMeToken.sol ...
@@ -112,6 +105,30 @@ You can save a gas on reading ... [View on GitHub](https://github.com/Blockchain
 
 ## Observations
 ???
+
+[MiniMeToken.sol, line 233](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L233)
+
+```
+function approveAndCall(address _spender, uint256 _amount, bytes _extraData) public returns (bool success) {
+    require(approve(_spender, _amount));
+
+    ApproveAndCallFallBack(_spender).receiveApproval(
+      msg.sender,
+      _amount,
+      this,
+      _extraData
+    );
+
+    return true;
+  }
+
+```
+
+The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is no any control on that contract and the `ApproveAndCall()` always returns TRUE (unless that function reverts).
+
+If the function is not in use by other Mothership contracts it is safer to remove it.
+
+
 
 <br>
 

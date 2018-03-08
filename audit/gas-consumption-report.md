@@ -94,10 +94,6 @@ performed by Blockchain Labs, February 27, 2018
 ···························|························|··········|···········|···········|··············|··············
 │  SEN                     ·  transferFrom          ·  105216  ·   117119  ·   114738  ·           5  ·       2.09  │
 ···························|························|··········|···········|···········|··············|··············
-│  Deployments                                      ·                                  ·  % of limit  ·             │
-····················································|··········|···········|···········|··············|··············
-│  ApproveAndCallFallBack                           ·  584964  ·  2879096  ·  2531562  ·      37.7 %  ·      46.00  │
-·---------------------------------------------------|----------|-----------|-----------|--------------|-------------·
 
   34 passing (2m)  
 ```
@@ -108,8 +104,3 @@ performed by Blockchain Labs, February 27, 2018
 Upon finalization of the contracts to be used by **Mothership**, the contracts were assessed on the gas usage of each function to ensure there aren't any unforeseen issues with exceeding the block size GasLimit.
 
 <br>
-
-
-**<font color=red>TODO:</font>**
-
- * Why ApproveAndCallFallBack requires so much gas?
