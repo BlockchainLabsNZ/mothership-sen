@@ -1,7 +1,7 @@
 # Functional tests
 Tests are conducted on the Kovan test network. The following contract has been verified on Etherscan.
 
-## SEN.sol [`0x9578bb`](https://kovan.etherscan.io/address/0x9578bbc4d83c31ae61013339d9645a3bcbf74a23#code)
+## [`SEN.sol`](https://kovan.etherscan.io/address/0x9578bbc4d83c31ae61013339d9645a3bcbf74a23#code)
 
 ## Accounts
 
@@ -27,7 +27,7 @@ Tests are conducted on the Kovan test network. The following contract has been v
   - [x] Owner can burn token balances of token holders. [`0x933067`](https://kovan.etherscan.io/tx/0x933067a2d89f5f70b34c4fd15542e2f1658839f5573ea0756149070d0f19721b)
   - [x] Non-owner cannot burn token balances of token holders. [`0xa6e897`](https://kovan.etherscan.io/tx/0xa6e897f1ef958572632e23a23e25cd5540e926c0ed333936cd1c6ea8b7c42341)
 
-## Distribution.sol [`0x86c6ee`](https://kovan.etherscan.io/address/0x86c6eeaca5ae56ebc0ea5a7834ababd71aaa78e5#code)
+## [`Distribution`](https://kovan.etherscan.io/address/0x86c6eeaca5ae56ebc0ea5a7834ababd71aaa78e5#code)
 
 ## Accounts
 
