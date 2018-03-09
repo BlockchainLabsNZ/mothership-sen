@@ -105,31 +105,6 @@ The audit report is focused on the following key areas - though this is not an e
 
 ## Observations
 
-#### ApproveAndCall
-
-[MiniMeToken.sol, line 233](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L233)
-
-```
-function approveAndCall(address _spender, uint256 _amount, bytes _extraData) public returns (bool success) {
-    require(approve(_spender, _amount));
-
-    ApproveAndCallFallBack(_spender).receiveApproval(
-      msg.sender,
-      _amount,
-      this,
-      _extraData
-    );
-
-    return true;
-  }
-
-```
-
-The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is no any control on that contract and the `ApproveAndCall()` always returns TRUE (unless that function reverts).
-
-If the function is not in use by other Mothership contracts it is safer to remove it.
-
-
 #### Controller can transfer tokens without permission
 
 [MiniMeToken.sol, line 125](https://github.com/BlockchainLabsNZ/mothership-sen/blob/audit/contracts/MiniMeToken.sol#L125)
