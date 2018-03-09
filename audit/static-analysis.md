@@ -75,7 +75,7 @@ function transferFrom(address _from, address _to, uint256 _amount) public return
 
 It checks some conditions and then calling `doTransfer()`.
 
-Usually it's called by receiver. First of all it checks if the caller is authorized by the token holder (sender) to transfer money from his/her account to receiver account. If so, it forward calls to `doTransfer()` , else it returns fail.
+Usually it's called by receiver. First of all it checks if the caller is authorized by the token holder (sender) to transfer money from his/her account to receiver account. If so, it forward calls to `doTransfer()` , else it returns FALSE.
 
 If the caller is the contract controller, the function simply forwards the call to `doTransfer()` without other checks. 
 
@@ -106,7 +106,7 @@ Pre-Conditions:
 - `parentSnapShotBlock` (the block number from the Parent Token that was used to determine the initial distribution of the Clone Token) is less than the current block number. - **not relevant to Mothership's implementation of the MiniMe token because they don't clone tokens**.
 - The receiver address is not the address of this contract and other than a zero.
 
-The function checks the `balanceOfAt()` of the sender for the current block number. It returns FAIL if the balance is less than an amount requested to transfer. 
+The function checks the `balanceOfAt()` of the sender for the current block number. It returns FALSE if the balance is less than an amount requested to transfer. 
 
 Then the function checks if the controller is a contract.
 If so, it call the `onTransfer()` function and requires it should return TRUE.
