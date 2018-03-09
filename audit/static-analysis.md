@@ -225,7 +225,7 @@ Pre Condition:
 
 #### Security concerns
 
-The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should inherit. There is not any control on that contract and the `ApproveAndCall()` always returns TRUE (unless the called function reverts).
+The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is not any control on that contract and the `ApproveAndCall()` always returns TRUE (unless the called function reverts).
 
 
 
