@@ -125,7 +125,7 @@ function approveAndCall(address _spender, uint256 _amount, bytes _extraData) pub
 
 ```
 
-The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is no any control on that contract and the `ApproveAndCall()` always returns TRUE (unless that function reverts).
+The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should inherit. There is no any control on that contract and the `ApproveAndCall()` always returns TRUE (unless that function reverts).
 
 If the function is not in use by other Mothership contracts it is safer to remove it.
 
