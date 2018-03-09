@@ -159,7 +159,7 @@ The `controller` is able to transfer token balances to and from any account with
 If deployer forgets to change controllership of the SEN token to the distribution contract, anyone would be able to transfer their tokens even during distribution period. 
 
 It is possible after `transfersEnabled` modifier was removed from the original contract.
-Now there is the only check [line 168](https://github.com/BlockchainLabsNZ/mothership-sen/blob/audit/contracts/MiniMeToken.sol#L168):
+This [line 168](https://github.com/BlockchainLabsNZ/mothership-sen/blob/audit/contracts/MiniMeToken.sol#L168) is the only check now:
 
 ```
     if (isContract(controller)) {
