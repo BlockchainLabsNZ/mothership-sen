@@ -104,7 +104,6 @@ The audit report is focused on the following key areas - though this is not an e
 <br>
 
 ## Observations
-???
 
 [MiniMeToken.sol, line 233](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L233)
 
@@ -128,13 +127,31 @@ The `_spender` is an **EXTERNAL** contract that can do anything in the function 
 
 If the function is not in use by other Mothership contracts it is safer to remove it.
 
+[MiniMeToken.sol, line 125](https://github.com/BlockchainLabsNZ/mothership-sen/blob/audit/contracts/MiniMeToken.sol#L125)
+```
+  function transferFrom(address _from, address _to, uint256 _amount) public returns (bool success) {
 
+    // The controller of this contract can move tokens around at will,
+    //  this is important to recognize! Confirm that you trust the
+    //  controller of this contract, which in most situations should be
+    //  another open source smart contract or 0x0
+    if (msg.sender != controller) {
+
+      // The standard ERC 20 transferFrom functionality
+      if (allowed[_from][msg.sender] < _amount)
+        return false;
+
+      allowed[_from][msg.sender] -= _amount;
+    }
+    return doTransfer(_from, _to, _amount);
+  }
+```
+
+The `controller` is able to transfer token balances to and from any account without permission. We recommend that once distribution of tokens has been finalized to call `changeController` to the 0x0 address so that there is a guarantee that balances cannot be altered in future by anyone.
 
 <br>
 
 ## Conclusion
-
-???
 
 The developers demonstrated an understanding of Solidity and smart contracts. They were receptive to the feedback provided to help improve the robustness of the contracts.
 
