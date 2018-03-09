@@ -105,6 +105,8 @@ The audit report is focused on the following key areas - though this is not an e
 
 ## Observations
 
+#### ApproveAndCall
+
 [MiniMeToken.sol, line 233](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L233)
 
 ```
@@ -127,6 +129,9 @@ The `_spender` is an **EXTERNAL** contract that can do anything in the function 
 
 If the function is not in use by other Mothership contracts it is safer to remove it.
 
+
+#### Controller can transfer tokens without permission
+
 [MiniMeToken.sol, line 125](https://github.com/BlockchainLabsNZ/mothership-sen/blob/audit/contracts/MiniMeToken.sol#L125)
 ```
   function transferFrom(address _from, address _to, uint256 _amount) public returns (bool success) {
@@ -148,6 +153,30 @@ If the function is not in use by other Mothership contracts it is safer to remov
 ```
 
 The `controller` is able to transfer token balances to and from any account without permission. We recommend that once distribution of tokens has been finalized to call `changeController` to the 0x0 address so that there is a guarantee that balances cannot be altered in future by anyone.
+
+#### Controllership and token transfer
+
+If deployer forgets to change controllership of the SEN token to the distribution contract, anyone would be able to transfer their tokens even during distribution period. 
+
+It is possible after `transfersEnabled` modifier was removed from the original contract.
+This [line 168](https://github.com/BlockchainLabsNZ/mothership-sen/blob/audit/contracts/MiniMeToken.sol#L168) is the only check now:
+
+```
+    if (isContract(controller)) {
+      require(TokenController(controller).onTransfer(_from, _to, _amount));
+    }
+
+```
+
+If the contract controller is the distribution contract this will always return FALSE in the [line 125](https://github.com/BlockchainLabsNZ/mothership-sen/blob/audit/contracts/Distribution.sol#L125):
+
+```
+  function onTransfer(address, address, uint256) public returns (bool) {
+    return false;
+  }
+```
+
+This makes transfers impossible while the controller is the distribution contract. 
 
 <br>
 
