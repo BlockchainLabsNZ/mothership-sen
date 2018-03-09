@@ -273,7 +273,7 @@ It returns `_owner` balance at the specified block number, for the current token
 		- should return the owner balance at the queried block number
 	- otherwise
 		- should return the owner balance at the block number when this token was created  
-	- should returns zero if there is no parent tokens used
+	- should return zero if there is no parent tokens used
 
 
 
@@ -401,7 +401,8 @@ If the queried block is less than the block number of the first record, it retur
 
 - it should return 0 if there are no recorded checkpoints
 - it should return token amount at the last recorded checkpoint if the queried block number is greater or equal than block number from the last record in history
-- otherwise it should return the token amount from the last record that preceeds the queried block 
+- otherwise 
+	- it should return the token amount from the last record that preceeds the queried block 
 
 
 
