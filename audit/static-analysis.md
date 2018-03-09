@@ -21,9 +21,7 @@ SEN Token inherits from [Minime Token contracts](https://github.com/Giveth/minim
 - It is not supposed to receive ETH (no fallback function)
 - It has some differences with original contract in checking conditions - [View issue on Github](https://github.com/BlockchainLabsNZ/mothership-sen/issues/1)
 
-#### Security concerns
 
-The original MiniMe token contract allows the contract controller to transfer tokens without token holders permission. In the current implementation of MiniMe it is also always allowed to transfer tokens after minting.
 
 <hr>
 <br>
@@ -134,9 +132,7 @@ Otherwise, the function updates balances of the receiver and the sender (with ch
 	- if the distribution period is over and the amount to transfer is less than the balance of sender
 
 <br>
-#### Security concerns
 
-Tokens holders would be able to transfer their tokens during distribution period **IF** the deployer forgets to change SEN token controller to the distribution contract.
 
 
 <!-- ----------------------------- -->
@@ -217,17 +213,11 @@ Token holder approves `_spender` to send `_amount` tokens on
 its behalf, and then a function is triggered in the contract that is
 being approved, `_spender`. 
 
+The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is not any control on that contract and the `ApproveAndCall()` always returns TRUE (unless the called function reverts).
+
 Pre Condition: 
 
 - `_spender` should be approved by the token holder to transfer specified `_amount`
-
-
-
-#### Security concerns
-
-The `_spender` is an **EXTERNAL** contract that can do anything in the function `receiveApproval()` which it should implement. There is not any control on that contract and the `ApproveAndCall()` always returns TRUE (unless the called function reverts).
-
-
 
 
 
