@@ -89,6 +89,8 @@ The audit report is focused on the following key areas - though this is not an e
 - **Gas costs can be reduced by using bytes32 instead of string in proxyMintTokens()** - `Gas-optimization` <br>The `proxyMintTokens` function takes 2 parameters `string _paidCurrency, string _paidTxID`. It is possible to save on gas costs each time this function is called by changing these to `bytes32 _paidCurrency, bytes32 _paidTxID` ... 
 [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/3)
 
+	[x] Fixed. [PR4](https://github.com/mothershipcx/sen-contracts/pull/4)
+
 - **Favour require() over If() statements** - `Best practices`
 <br>it is better to keep the "require()" from the original MiniMeToken.sol ...
  [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/1)
@@ -133,6 +135,8 @@ The audit report is focused on the following key areas - though this is not an e
 
 The `controller` is able to transfer token balances to and from any account without permission. We recommend that once distribution of tokens has been finalized to call `changeController` to the 0x0 address so that there is a guarantee that balances cannot be altered in future by anyone.
 
+  [x] Fixed. [3ac043](https://github.com/mothershipcx/sen-contracts/commit/3ac04396d3420974bfade80cdd4db419d3ac0ccf)
+
 #### Controllership and token transfer
 
 If deployer forgets to change controllership of the SEN token to the distribution contract, anyone would be able to transfer their tokens even during distribution period. 
@@ -156,6 +160,8 @@ If the contract controller is the distribution contract this will always return 
 ```
 
 This makes transfers impossible while the controller is the distribution contract. 
+
+  - Update: The developers decided there is no need to fix it. 
 
 <br>
 
