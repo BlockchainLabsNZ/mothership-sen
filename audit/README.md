@@ -84,12 +84,16 @@ The audit report is focused on the following key areas - though this is not an e
 - **Use view or pure instead of constant modifier** - `Best practices`
 <br>MiniMeToken.sol, lines: [189](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L189), [222](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L222), [248](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L248), [260](https://github.com/BlockchainLabsNZ/mothership-sen/blob/b2cd76f851f44f421530eb31ad85e33235a87355/contracts/MiniMeToken.sol#L260), ... [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/5)
 
+	[x] Fixed. [d70549](https://github.com/mothershipcx/sen-contracts/pull/3/commits/d70549db361b9a52cb8136fc77fb2c3e03c53182)
+
 - **Gas costs can be reduced by using bytes32 instead of string in proxyMintTokens()** - `Gas-optimization` <br>The `proxyMintTokens` function takes 2 parameters `string _paidCurrency, string _paidTxID`. It is possible to save on gas costs each time this function is called by changing these to `bytes32 _paidCurrency, bytes32 _paidTxID` ... 
 [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/3)
 
 - **Favour require() over If() statements** - `Best practices`
 <br>it is better to keep the "require()" from the original MiniMeToken.sol ...
  [View on GitHub](https://github.com/BlockchainLabsNZ/mothership-sen/issues/1)
+
+	[x] Fixed [125582](https://github.com/mothershipcx/sen-contracts/pull/3/commits/1255820c25742c9be924baf473ffb5bf1e0e9871)
 
 ### Moderate
 - None found
